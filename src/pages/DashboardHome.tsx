@@ -1,7 +1,9 @@
+import EarnStatus from "@/components/DashboardHome/EarnStatus";
+
 const DashboardHome = () => {
   return (
     <div>
-      <h2>Dashboard Home</h2>
+      <EarnStatus />
     </div>
   );
 };

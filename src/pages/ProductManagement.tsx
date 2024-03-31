@@ -1,7 +1,11 @@
+import TableWrapper from "@/components/share/Table";
+import Title from "@/components/share/Title";
+
 const ProductManagement = () => {
   return (
     <div>
-      <h2>Product Management</h2>
+      <Title>Product Management</Title>
+      <TableWrapper />
     </div>
   );
 };
