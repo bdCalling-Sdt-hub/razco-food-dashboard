@@ -2,6 +2,8 @@ import Dashboard from "@/layout/Dasboard/Dashboard";
 import About from "@/pages/About";
 import AddProduct from "@/pages/AddProduct";
 import Category from "@/pages/Category";
+import ChangePassword from "@/pages/ChangePassword";
+import CoverPage from "@/pages/CoverPage";
 import CreateOffer from "@/pages/CreateOffer";
 import DashboardHome from "@/pages/DashboardHome";
 import FAQPage from "@/pages/FAQ";
@@ -69,6 +71,10 @@ const router = createBrowserRouter([
         element: <MakeAdmin />,
       },
       {
+        path: "/cover",
+        element: <CoverPage />,
+      },
+      {
         path: "/settings",
         element: <Settings />,
       },
@@ -91,6 +97,10 @@ const router = createBrowserRouter([
       {
         path: "/settings/profile",
         element: <Profile />,
+      },
+      {
+        path: "/settings/change-password",
+        element: <ChangePassword />,
       },
     ],
   },

@@ -2,6 +2,7 @@ import { Avatar, Badge, Layout, Menu, Popover } from "antd";
 import {
   Bell,
   Container,
+  Image,
   LayoutDashboard,
   ListOrdered,
   MessageSquareReply,
@@ -107,12 +108,22 @@ const menuItems = [
         title: "Profile",
         icon: "",
       },
+      {
+        path: "/change-password",
+        title: "Change password",
+        icon: "",
+      },
     ],
   },
   {
     path: "/make-admin",
     title: "Make Admin",
     icon: <ShieldPlus size={18} />,
+  },
+  {
+    path: "/cover",
+    title: "Cover Page",
+    icon: <Image size={18} />,
   },
 ];
 
@@ -129,7 +140,7 @@ const Dashboard = () => {
   return (
     <Layout>
       <Sider width={280} style={{ background: "#5B52A3" }} trigger={null}>
-        <img src={logo} alt="" />
+        <img src={logo} alt="" className="mx-auto mb-8 mt-5" />
         <Menu
           mode="inline"
           style={{ background: "#5B52A3", color: "white", marginTop: "10px" }}
@@ -190,7 +201,7 @@ const Dashboard = () => {
                   }}
                   icon={<User size={25} />}
                 />
-                <h2 className="text-lg text-white font-semibold">Mr.admin</h2>
+                <h2 className="text-lg text-white">Mr.admin</h2>
               </div>
             </Popover>
           </div>
