@@ -1,7 +1,87 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import Title from "@/components/share/Title";
+import { Input, Table } from "antd";
+import { Reply, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
+
+const data = [...Array(50).keys()].map((index) => ({
+  name: `${index}-Fahim"`,
+  feedback: "Where then did who disporting him pleasure so sorrow none..",
+  time: "8:50 AM",
+  action: "",
+}));
+
 const Feedback = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Feedback",
+      dataIndex: "feedback",
+      key: "feedback",
+    },
+    {
+      title: "Time",
+      dataIndex: "time",
+      key: "time",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, data) => (
+        <div className="flex items-center gap-2 justify-end">
+          <button className="flex items-center border rounded-md px-1">
+            <Reply /> Pending
+          </button>
+        </div>
+      ),
+    },
+    {
+      title: <div className="text-right">Action</div>,
+      dataIndex: "action",
+      key: "action",
+      render: (_, data) => (
+        <div className="flex items-center gap-2 justify-end">
+          <button className="text-red-500">
+            <Trash2 />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  const handlePage = (page: any) => {
+    setCurrentPage(page);
+  };
+
+  const handleOffer = (value) => {
+    setOffer(value);
+  };
+
   return (
     <div>
-      <h2>Feedback</h2>
+      <Title>Feedback</Title>
+      <Input
+        prefix={<Search />}
+        className="w-1/4 h-11 my-5"
+        placeholder="Search"
+      />
+      <Table
+        dataSource={data}
+        columns={columns}
+        pagination={{
+          pageSize,
+          total: 50,
+          current: currentPage,
+          onChange: handlePage,
+        }}
+      />
     </div>
   );
 };

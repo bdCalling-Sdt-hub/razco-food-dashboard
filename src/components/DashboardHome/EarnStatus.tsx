@@ -32,11 +32,11 @@ const EarnStatus = () => {
     },
   ];
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-4 gap-2">
       {earnStatus.map((data, index) => (
         <div
           key={index}
-          className="flex items-center gap-5 shadow p-7 rounded bg-base"
+          className="flex items-center gap-5  p-6 rounded bg-base"
         >
           <div
             className="w-16 h-16 flex items-center justify-center rounded-full"
