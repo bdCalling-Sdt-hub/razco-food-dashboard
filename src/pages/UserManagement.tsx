@@ -17,11 +17,11 @@ const data = [...Array(50).keys()].map((index) => ({
   action: "",
 }));
 
-const statusTypes = ["Pending", "Packing", "Processing", "Shipping", "Shipped"];
+const statusTypes = ["Active", "Deactive"];
 
 const UserManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState("Pending");
+  const [status, setStatus] = useState("Active");
   const pageSize = 10;
 
   const columns = [

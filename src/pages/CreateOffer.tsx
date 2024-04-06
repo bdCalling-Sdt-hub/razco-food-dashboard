@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import OfferModel from "@/components/CreateOffer/OfferModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import { Select, Table } from "antd";
@@ -16,6 +17,10 @@ const offers = ["Eid", "Big seal"];
 
 const CreateOffer = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
 
   const [offer, setOffer] = useState("Eid");
   const pageSize = 10;
@@ -73,7 +78,9 @@ const CreateOffer = () => {
             value: offer,
           }))}
         />
-        <Button icon={<Plus size={20} />}>Add Offer</Button>
+        <Button onClick={showModal} icon={<Plus size={20} />}>
+          Add Offer
+        </Button>
       </div>
       <Table
         dataSource={data}
@@ -85,6 +92,7 @@ const CreateOffer = () => {
           onChange: handlePage,
         }}
       />
+      <OfferModel open={open} setOpen={setOpen} />
     </div>
   );
 };

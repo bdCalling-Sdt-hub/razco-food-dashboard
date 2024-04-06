@@ -4,6 +4,7 @@ import Title from "@/components/share/Title";
 import { Input, Select, Table } from "antd";
 import { Edit, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const data = [...Array(50).keys()].map((index) => ({
   productId: `${index}-INV001"`,
@@ -124,7 +125,9 @@ const ProductManagement = () => {
             }))}
           />
         </div>
-        <Button icon={<Plus />}>Add Product</Button>
+        <Link to="/add-product">
+          <Button icon={<Plus size={18} />}>Add Product</Button>
+        </Link>
       </div>
       <Table
         dataSource={data}
