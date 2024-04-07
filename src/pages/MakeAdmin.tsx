@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import AdminModel from "@/components/MakeAdmin/AdminModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import { Table } from "antd";
@@ -15,6 +16,10 @@ const data = [...Array(50).keys()].map((index) => ({
 
 const MakeAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
   const pageSize = 10;
   const columns = [
     {
@@ -59,7 +64,9 @@ const MakeAdmin = () => {
     <div>
       <Title>Make Admin</Title>
       <div className="flex justify-end items-center mb-10 mt-4">
-        <Button icon={<Plus size={18} />}>Add Admin</Button>
+        <Button onClick={showModal} icon={<Plus size={18} />}>
+          Add Admin
+        </Button>
       </div>
       <Table
         dataSource={data}
@@ -71,6 +78,7 @@ const MakeAdmin = () => {
           onChange: handlePage,
         }}
       />
+      <AdminModel open={open} setOpen={setOpen} />
     </div>
   );
 };

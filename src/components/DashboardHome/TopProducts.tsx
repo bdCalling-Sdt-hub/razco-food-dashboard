@@ -1,5 +1,4 @@
 import { Table } from "antd";
-import { Link } from "react-router-dom";
 import Title from "../share/Title";
 const TopProducts = () => {
   const data = [...Array(4).keys()].map((item, index) => ({
@@ -59,9 +58,9 @@ const TopProducts = () => {
     <div className="bg-base rounded p-4 overflow-x-scroll">
       <div className="flex items-center justify-between">
         <Title className="font-bold mb-5">Top Products</Title>
-        <Link to="#" className="text-secondary text-lg hover:underline">
+        {/* <Link to="#" className="text-secondary text-lg hover:underline">
           View all
-        </Link>
+        </Link> */}
       </div>
       <Table dataSource={data} columns={columns} pagination={false} />
     </div>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import FeedbackModel from "@/components/Feedback/FeedbackModel";
 import Title from "@/components/share/Title";
 import { Input, Table } from "antd";
 import { Reply, Search, Trash2 } from "lucide-react";
@@ -13,6 +14,10 @@ const data = [...Array(50).keys()].map((index) => ({
 
 const Feedback = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
   const pageSize = 10;
   const columns = [
     {
@@ -36,7 +41,10 @@ const Feedback = () => {
       key: "status",
       render: (_, data) => (
         <div className="flex items-center gap-2 justify-end">
-          <button className="flex items-center border rounded-md px-1">
+          <button
+            className="flex items-center border rounded-md px-1"
+            onClick={showModal}
+          >
             <Reply /> Pending
           </button>
         </div>
@@ -60,10 +68,6 @@ const Feedback = () => {
     setCurrentPage(page);
   };
 
-  const handleOffer = (value) => {
-    setOffer(value);
-  };
-
   return (
     <div>
       <Title>Feedback</Title>
@@ -82,6 +86,7 @@ const Feedback = () => {
           onChange: handlePage,
         }}
       />
+      <FeedbackModel open={open} setOpen={setOpen} />
     </div>
   );
 };

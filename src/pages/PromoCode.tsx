@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import PromoCodeModel from "@/components/PromoCode/PromoCodeModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import { Select, Table } from "antd";
@@ -16,8 +18,11 @@ const offers = ["Eid", "Big seal"];
 
 const PromoCode = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [category, setCategory] = useState("Foods");
   const [offer, setOffer] = useState("Eid");
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
   const pageSize = 10;
   const columns = [
     {
@@ -73,7 +78,9 @@ const PromoCode = () => {
             value: offer,
           }))}
         />
-        <Button icon={<Plus size={20} />}>Create Promo Code</Button>
+        <Button onClick={showModal} icon={<Plus size={20} />}>
+          Create Promo Code
+        </Button>
       </div>
       <Table
         dataSource={data}
@@ -85,6 +92,7 @@ const PromoCode = () => {
           onChange: handlePage,
         }}
       />
+      <PromoCodeModel open={open} setOpen={setOpen} />
     </div>
   );
 };

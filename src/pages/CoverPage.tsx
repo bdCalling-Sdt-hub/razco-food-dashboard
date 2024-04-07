@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import CoverModel from "@/components/CoverPage/CoverModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import { Select, Table } from "antd";
@@ -18,7 +19,10 @@ const offers = ["Eid", "Big seal"];
 
 const CoverPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
   const [offer, setOffer] = useState("Eid");
   const pageSize = 10;
   const columns = [
@@ -80,7 +84,9 @@ const CoverPage = () => {
             value: offer,
           }))}
         />
-        <Button icon={<Plus size={20} />}>Create Promo Code</Button>
+        <Button onClick={showModal} icon={<Plus size={20} />}>
+          Add Cover
+        </Button>
       </div>
       <Table
         dataSource={data}
@@ -92,6 +98,7 @@ const CoverPage = () => {
           onChange: handlePage,
         }}
       />
+      <CoverModel open={open} setOpen={setOpen} />
     </div>
   );
 };
