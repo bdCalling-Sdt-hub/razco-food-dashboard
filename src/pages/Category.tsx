@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CategoryModel from "@/components/Category/CategoryModel";
 import Button from "@/components/share/Button";
@@ -49,7 +50,7 @@ const Category = () => {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button className="text-primary">
             <Edit />
@@ -66,7 +67,7 @@ const Category = () => {
     setCurrentPage(page);
   };
 
-  const handleCategory = (value) => {
+  const handleCategory = (value: any) => {
     setCategory(value);
   };
 

@@ -72,7 +72,7 @@ const ProductManagement = () => {
       title: "Action",
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2">
           <button className="text-primary">
             <Edit />
@@ -89,10 +89,10 @@ const ProductManagement = () => {
     setCurrentPage(page);
   };
 
-  const handleCategory = (value) => {
+  const handleCategory = (value: any) => {
     setCategory(value);
   };
-  const handleOffer = (value) => {
+  const handleOffer = (value: any) => {
     setOffer(value);
   };
 

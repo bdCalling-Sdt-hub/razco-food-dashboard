@@ -39,7 +39,7 @@ const Feedback = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button
             className="flex items-center border rounded-md px-1"
@@ -54,7 +54,7 @@ const Feedback = () => {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button className="text-red-500">
             <Trash2 />

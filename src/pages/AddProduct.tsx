@@ -5,18 +5,18 @@ import { Plus } from "lucide-react";
 const { Option } = Select;
 const { TextArea } = Input;
 const AddProduct = () => {
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
   };
 
-  const onCategoryChange = (value) => {
+  const onCategoryChange = (value: any) => {
     console.log(value);
   };
-  const onSubcategoryChange = (value) => {
+  const onSubcategoryChange = (value: any) => {
     console.log(value);
   };
 
-  const normFile = (e) => {
+  const normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e;
     }

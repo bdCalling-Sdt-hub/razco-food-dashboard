@@ -44,7 +44,7 @@ const CreateOffer = () => {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button className="text-primary">
             <Edit />
@@ -61,7 +61,7 @@ const CreateOffer = () => {
     setCurrentPage(page);
   };
 
-  const handleOffer = (value) => {
+  const handleOffer = (value: any) => {
     setOffer(value);
   };
 

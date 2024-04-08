@@ -5,7 +5,7 @@ import { Button, Col, Form, Input, Row } from "antd";
 
 const Profile = () => {
   const [openEdit, setOpenEdit] = useState(false);
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
   };
 

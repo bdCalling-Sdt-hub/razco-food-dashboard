@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const SetNewPassword = () => {
   const navigate = useNavigate();
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     console.log(values);
     navigate("/auth/login");
   };

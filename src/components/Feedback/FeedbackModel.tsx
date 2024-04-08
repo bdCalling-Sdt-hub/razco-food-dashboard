@@ -11,7 +11,7 @@ const FeedbackModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
   const handleCancel = () => {
     setOpen(false);
   };
-  const onFinish = (valeus) => {
+  const onFinish = (valeus: any) => {
     console.log(valeus);
   };
 

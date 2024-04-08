@@ -46,7 +46,7 @@ const MakeAdmin = () => {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button className="text-red-500">
             <Trash2 />

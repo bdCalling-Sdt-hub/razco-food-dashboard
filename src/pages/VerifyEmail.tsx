@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
-  const onChange = (text) => {
+  const onChange = (text: any) => {
     console.log("onChange:", text);
   };
   const sharedProps = {

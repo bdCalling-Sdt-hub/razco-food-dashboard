@@ -45,7 +45,7 @@ const OrderManagement = () => {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="text-right">
           <Select
             defaultValue={status}

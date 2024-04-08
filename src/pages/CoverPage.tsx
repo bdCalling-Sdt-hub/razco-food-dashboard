@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CoverModel from "@/components/CoverPage/CoverModel";
 import Button from "@/components/share/Button";
@@ -50,7 +51,7 @@ const CoverPage = () => {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",
       key: "action",
-      render: (_, data) => (
+      render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button className="text-primary">
             <Edit />
@@ -67,7 +68,7 @@ const CoverPage = () => {
     setCurrentPage(page);
   };
 
-  const handleOffer = (value) => {
+  const handleOffer = (value: any) => {
     setOffer(value);
   };
 

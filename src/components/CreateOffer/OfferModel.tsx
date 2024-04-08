@@ -13,10 +13,10 @@ const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
   const handleCancel = () => {
     setOpen(false);
   };
-  const onFinish = (valeus) => {
+  const onFinish = (valeus: any) => {
     console.log(valeus);
   };
-  const handleImage = (e) => {
+  const handleImage = (e: any) => {
     const file = e.target.files?.[0];
     const url = URL.createObjectURL(file);
     setImageUrl(url);
