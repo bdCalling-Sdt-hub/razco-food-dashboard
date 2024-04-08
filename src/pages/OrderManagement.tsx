@@ -5,11 +5,10 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 
 const data = [...Array(50).keys()].map((index) => ({
-  orderNo: `${index}-INV001"`,
+  orderNo: `${index + 1}`,
   totalItems: "Cucumber",
   price: "4564156",
-  deliveryTime: "foods",
-
+  deliveryTime: "4-10-2024",
   action: "",
 }));
 

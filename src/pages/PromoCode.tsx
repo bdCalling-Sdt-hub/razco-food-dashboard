@@ -58,7 +58,7 @@ const PromoCode = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button className="text-primary">
+          <button onClick={showModal} className="text-primary">
             <Edit />
           </button>
           <button className="text-red-500">

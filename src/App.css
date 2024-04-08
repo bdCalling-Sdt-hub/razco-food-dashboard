@@ -46,6 +46,6 @@ span.ant-menu-title-content {
   border: 0;
 }
 
-input.ant-input.ant-input-lg.css-dev-only-do-not-override-11xg00t.ant-input-outlined.ant-otp-input {
+.ant-otp-input {
   height: 80px;
 }

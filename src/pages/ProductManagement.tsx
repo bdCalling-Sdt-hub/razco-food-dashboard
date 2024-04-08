@@ -75,7 +75,9 @@ const ProductManagement = () => {
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2">
           <button className="text-primary">
-            <Edit />
+            <Link to="/add-product">
+              <Edit />
+            </Link>
           </button>
           <button className="text-red-500">
             <Trash2 />
