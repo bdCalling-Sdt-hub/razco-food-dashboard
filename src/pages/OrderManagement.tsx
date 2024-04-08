@@ -5,15 +5,11 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 
 const data = [...Array(50).keys()].map((index) => ({
-  productId: `${index}-INV001"`,
-  productsName: "Cucumber",
-  barcode: "4564156",
-  category: "foods",
-  quantity: "500gm",
-  discount: "0%",
-  price: "$15",
-  stock: "500",
-  status: "Available",
+  orderNo: `${index}-INV001"`,
+  totalItems: "Cucumber",
+  price: "4564156",
+  deliveryTime: "foods",
+
   action: "",
 }));
 
@@ -26,24 +22,14 @@ const OrderManagement = () => {
 
   const columns = [
     {
-      title: "Product ID",
-      dataIndex: "productId",
-      key: "productId",
+      title: "Order No",
+      dataIndex: "orderNo",
+      key: "orderNo",
     },
     {
-      title: "Product Name",
-      dataIndex: "productsName",
-      key: "productsName",
-    },
-    {
-      title: "Barcode",
-      dataIndex: "barcode",
-      key: "barcode",
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
+      title: "Total Items",
+      dataIndex: "totalItems",
+      key: "totalItems",
     },
     {
       title: "Price",
@@ -51,19 +37,9 @@ const OrderManagement = () => {
       key: "price",
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-    {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "stock",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "Delivery Time",
+      dataIndex: "deliveryTime",
+      key: "deliveryTime",
     },
     {
       title: <div className="text-right">Action</div>,

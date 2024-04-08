@@ -5,6 +5,7 @@ import {
   Image,
   LayoutDashboard,
   ListOrdered,
+  LogOut,
   MessageSquareReply,
   Plus,
   Settings,
@@ -15,7 +16,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 const { Header, Sider, Content } = Layout;
 
@@ -48,7 +49,7 @@ const menuItems = [
   {
     path: "/categories",
     title: "Categories",
-    icon: <SquareMenu size={18} />,
+    icon: <SquareMenu size={18} color="#fff" />,
     subMenu: [
       {
         path: "/category",
@@ -81,7 +82,7 @@ const menuItems = [
   {
     path: "/settings",
     title: "Settings",
-    icon: <Settings size={18} />,
+    icon: <Settings size={18} color="#fff" />,
     subMenu: [
       {
         path: "/terms-and-conditions",
@@ -133,17 +134,31 @@ const content = (
     <p>Content</p>
   </div>
 );
+const { SubMenu } = Menu;
 
 const Dashboard = () => {
-  const { SubMenu } = Menu;
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    navigate("/auth/login");
+  };
   return (
     <Layout>
-      <Sider width={280} style={{ background: "#5B52A3" }} trigger={null}>
+      <Sider
+        width={300}
+        className="sidebar-menu"
+        style={{
+          overflow: "auto",
+          height: "100vh",
+          zIndex: 2,
+          backgroundColor: "#5B52A3",
+        }}
+        trigger={null}
+      >
         <img src={logo} alt="" className="mx-auto mb-8 mt-5" />
         <Menu
           mode="inline"
-          style={{ background: "#5B52A3", color: "white", marginTop: "10px" }}
+          style={{ background: "#5B52A3", color: "white" }}
           defaultSelectedKeys={["1"]}
         >
           {menuItems.map((item, index) =>
@@ -158,7 +173,11 @@ const Dashboard = () => {
                   <Menu.Item
                     key={`sub-${index}-${subIndex}`}
                     icon={subItem.icon}
-                    style={{ color: "#fff", fontSize: "16px" }}
+                    style={{
+                      color: "#fff",
+                      fontSize: "16px",
+                      marginBottom: "10px",
+                    }}
                   >
                     <Link to={`${item.path}${subItem.path}`}>
                       {subItem.title}
@@ -170,12 +189,25 @@ const Dashboard = () => {
               <Menu.Item
                 key={`item-${index}`}
                 icon={item.icon}
-                style={{ color: "#fff", fontSize: "16px" }}
+                style={{
+                  color: "#fff",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
               >
                 <Link to={item.path}>{item.title}</Link>
               </Menu.Item>
             )
           )}
+          <Menu.Item
+            key="500"
+            className=""
+            icon={<LogOut size={20} />}
+            style={{ color: "#fff", fontSize: "16px" }}
+            onClick={handleLogout}
+          >
+            Logout
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
@@ -212,7 +244,7 @@ const Dashboard = () => {
             height: `calc(100vh - 80px)`,
           }}
         >
-          <div className="bg-white h-[calc(100vh-100px)] m-2 rounded p-2 overflow-hidden">
+          <div className="bg-white h-[calc(100vh-100px)] m-2 rounded p-3 overflow-hidden">
             <Outlet />
           </div>
         </Content>

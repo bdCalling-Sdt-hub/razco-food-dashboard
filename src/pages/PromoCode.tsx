@@ -8,9 +8,11 @@ import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index}-INV001"`,
-  offerName: "Eid Offer",
-  store: 500,
+  sNo: `${index + 1}`,
+  couponCode: "razco",
+  discount: "50%",
+  validityDate: "24-5-2024",
+  targetPoints: 500,
   action: "",
 }));
 
@@ -31,14 +33,24 @@ const PromoCode = () => {
       key: "sNo",
     },
     {
-      title: "Offer Name",
-      dataIndex: "offerName",
-      key: "offerName",
+      title: "Coupon Name",
+      dataIndex: "couponCode",
+      key: "couponCode",
     },
     {
-      title: "Store",
-      dataIndex: "store",
-      key: "store",
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
+    },
+    {
+      title: "Validity Date",
+      dataIndex: "validityDate",
+      key: "validityDate",
+    },
+    {
+      title: "Target Points",
+      dataIndex: "targetPoints",
+      key: "targetPoints",
     },
     {
       title: <div className="text-right">Action</div>,

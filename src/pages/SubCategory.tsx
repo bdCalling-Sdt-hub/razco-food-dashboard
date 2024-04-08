@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import SubcategoryModel from "@/components/Category/SubcategoryModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import { Select, Table } from "antd";
@@ -6,8 +7,8 @@ import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index}-INV001"`,
-  categoryName: "Eid Offer",
+  sNo: `${index + 1}`,
+  subcategoryName: "Banana",
   storeProduct: 500,
   subCatagories: 5,
   action: "",
@@ -18,6 +19,10 @@ const categories = ["Foods", "Vegetable", "Fruits"];
 const SubCategory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [category, setCategory] = useState("Vegetable");
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
   const pageSize = 10;
   const columns = [
     {
@@ -73,7 +78,9 @@ const SubCategory = () => {
             value: ct,
           }))}
         />
-        <Button icon={<Plus size={20} />}>Add Sub Category</Button>
+        <Button onClick={showModal} icon={<Plus size={20} />}>
+          Add Sub Category
+        </Button>
       </div>
       <Table
         dataSource={data}
@@ -85,6 +92,7 @@ const SubCategory = () => {
           onChange: handlePage,
         }}
       />
+      <SubcategoryModel open={open} setOpen={setOpen} />
     </div>
   );
 };
