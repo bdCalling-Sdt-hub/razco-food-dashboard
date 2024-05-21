@@ -1,18 +1,48 @@
 import AuthWrapper from "@/components/share/AuthWrapper";
 import Title from "@/components/share/Title";
+import { useVerifyEmailMutation } from "@/redux/slices/admin/settingApi";
 import { Button, Input } from "antd";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const VerifyEmail = () => {
+  const [otp, setOtp] = useState<number | null>();
   const navigate = useNavigate();
+  const [verifyEmail, { error, isSuccess, data }] = useVerifyEmailMutation();
+
+  // console.log(otp);
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Verify successful");
+        navigate(`/auth/set-new-password/${data?.data}`);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, navigate]);
+
   const onChange = (text: any) => {
-    console.log("onChange:", text);
+    setOtp(text);
   };
   const sharedProps = {
     onChange,
   };
-  const handleVerify = () => {
-    navigate("/auth/set-new-password");
+  const handleVerify = async () => {
+    try {
+      const email = localStorage.getItem("email");
+      await verifyEmail({ email, code: otp });
+    } catch (error: any) {
+      console.log(error?.message);
+    }
   };
   return (
     <AuthWrapper>
@@ -28,7 +58,7 @@ const VerifyEmail = () => {
         size="large"
         className="otp-input"
         style={{ width: "100%", height: "50px" }}
-        length={5}
+        length={4}
         formatter={(str) => str.toUpperCase()}
         {...sharedProps}
       />

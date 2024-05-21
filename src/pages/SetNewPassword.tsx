@@ -1,14 +1,30 @@
 import AuthWrapper from "@/components/share/AuthWrapper";
 import Title from "@/components/share/Title";
-import { Button, Form, Input } from "antd";
-import { useNavigate } from "react-router-dom";
+import { baseUrl } from "@/redux/api/baseApi";
+import { Button, Form } from "antd";
+import Input from "antd/es/input/Input";
+import { useNavigate, useParams } from "react-router-dom";
 
 const SetNewPassword = () => {
+  const { id } = useParams();
+  console.log(id);
   const navigate = useNavigate();
-  const onFinish = (values: any) => {
-    console.log(values);
-    navigate("/auth/login");
+
+  const onFinish = async (values: any) => {
+    try {
+      const res = await baseUrl.post("/auth/reset-password", values, {
+        headers: { "Content-Type": "application/json", Authorization: id },
+      });
+
+      if (res?.data?.success === true) {
+        alert("Password reset successful");
+        navigate("/auth/login");
+      }
+    } catch (error: any) {
+      console.log(error?.message);
+    }
   };
+
   return (
     <AuthWrapper>
       <div className="text-center mb-12">
@@ -19,7 +35,7 @@ const SetNewPassword = () => {
         </p>
       </div>
       <Form layout="vertical" onFinish={onFinish}>
-        <Form.Item label="New password" name="password">
+        <Form.Item label="New password" name="newPassword">
           <Input.Password
             placeholder="Write new password"
             style={{ height: "50px" }}

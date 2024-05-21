@@ -14,6 +14,9 @@ export enum tagTypes {
   status = "status",
   order = "order",
   product = "product",
+  forget = "forget",
+  reset = "reset",
+  verify = "verify",
 }
 
 export const tagTypesList = [tagTypes.user];

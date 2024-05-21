@@ -130,7 +130,7 @@ const router = createBrowserRouter([
         element: <VerifyEmail />,
       },
       {
-        path: "/auth/set-new-password",
+        path: "/auth/set-new-password/:id",
         element: <SetNewPassword />,
       },
     ],

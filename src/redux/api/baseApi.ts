@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { tagTypesList } from "../tag-types";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import { authKey } from "@/constants/storageKey";
-
+import axios from "axios";
 const authToken = getFromLocalStorage(authKey);
 
 export const baseApi = createApi({
@@ -15,3 +15,6 @@ export const baseApi = createApi({
   tagTypes: tagTypesList,
 });
 export const imageURL = "http://192.168.10.16:5000";
+export const baseUrl = axios.create({
+  baseURL: "http://192.168.10.16:5000/api/v1",
+});

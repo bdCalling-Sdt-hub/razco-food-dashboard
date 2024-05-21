@@ -100,6 +100,30 @@ export const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.password],
     }),
+    forgetPassword: build.mutation({
+      query: (data) => ({
+        url: `auth/forget-password`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.forget],
+    }),
+    resetPassword: build.mutation({
+      query: (data) => ({
+        url: `auth/reset-password`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.reset],
+    }),
+    verifyEmail: build.mutation({
+      query: (data) => ({
+        url: `auth/otp-verify`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.verify],
+    }),
   }),
 });
 
@@ -113,4 +137,7 @@ export const {
   useMyProfileQuery,
   useUpdateProfileMutation,
   useChangePasswordMutation,
+  useForgetPasswordMutation,
+  useResetPasswordMutation,
+  useVerifyEmailMutation,
 } = settingApi;
