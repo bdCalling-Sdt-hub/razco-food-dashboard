@@ -1,18 +1,50 @@
 import { Form, Input, Modal } from "antd";
 import Button from "../share/Button";
+import { useEffect } from "react";
+import { useReplyFeedbackMutation } from "@/redux/slices/admin/feedbackApi";
 
 interface OfferModelProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  feedbackId: string | null;
 }
 
 const { TextArea } = Input;
-const FeedbackModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
+const FeedbackModel: React.FC<OfferModelProps> = ({
+  open,
+  setOpen,
+  feedbackId,
+}) => {
+  const [replyFeedback, { isLoading, isSuccess, error }] =
+    useReplyFeedbackMutation();
+
+  useEffect(() => {
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        alert(errorData.data.message);
+        setOpen(false);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [error, isSuccess, setOpen]);
+  const onFinish = async (values: any) => {
+    try {
+      const res = await replyFeedback({
+        _id: feedbackId,
+        replyMessage: values?.replyMessage,
+      });
+      if (res?.data?.success === true) {
+        alert("Replied Successful");
+        setOpen(false);
+      }
+    } catch (error: any) {
+      console.log(error?.message);
+    }
+  };
   const handleCancel = () => {
     setOpen(false);
-  };
-  const onFinish = (valeus: any) => {
-    console.log(valeus);
   };
 
   return (
@@ -33,11 +65,13 @@ const FeedbackModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
               readOnly
             />
           </Form.Item>
-          <Form.Item label="Admin reply">
+          <Form.Item name="replyMessage" label="Admin reply">
             <TextArea rows={5} />
           </Form.Item>
 
-          <Button className="px-10 mx-auto mt-5">Send</Button>
+          <Button className="px-10 mx-auto mt-5">
+            {isLoading ? "Sending.." : "Send"}
+          </Button>
         </Form>
       </Modal>
     </div>

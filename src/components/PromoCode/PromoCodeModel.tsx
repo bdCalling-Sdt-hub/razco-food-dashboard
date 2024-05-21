@@ -1,6 +1,7 @@
 import { Form, Input, Modal } from "antd";
-import { useState } from "react";
+import { useEffect } from "react";
 import Button from "../share/Button";
+import { useCreateCouponMutation } from "@/redux/slices/admin/couponApi";
 
 interface OfferModelProps {
   open: boolean;
@@ -8,12 +9,41 @@ interface OfferModelProps {
 }
 
 const PromoCodeModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
-  const [imageUrl, setImageUrl] = useState("");
   const handleCancel = () => {
     setOpen(false);
   };
-  const onFinish = (valeus: any) => {
-    console.log(valeus);
+  const [createCoupon, { isLoading, data, isSuccess, error }] =
+    useCreateCouponMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Coupon add Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        // message.error(errorData.data.message);
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
+  const onFinish = async (data: any) => {
+    const couponData = {
+      couponCode: data?.couponCode,
+      couponDiscount: Number(data?.couponDiscount),
+      expireDate: data?.expireDate,
+      targetPoints: Number(data?.targetPoints),
+    };
+    try {
+      await createCoupon(couponData);
+    } catch (err: any) {
+      console.error(err.message);
+    }
   };
 
   return (
@@ -25,16 +55,16 @@ const PromoCodeModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
         footer={false}
       >
         <Form onFinish={onFinish} layout="vertical">
-          <Form.Item label="Coupon Code">
+          <Form.Item name="couponCode" label="Coupon Code">
             <Input placeholder="Enter coupon code" size="large" />
           </Form.Item>
-          <Form.Item label="Discount">
+          <Form.Item name={"couponDiscount"} label="Discount">
             <Input placeholder="Discount percentage" size="large" />
           </Form.Item>
-          <Form.Item label="Validity Date">
+          <Form.Item name={"expireDate"} label="Validity Date">
             <Input placeholder="Validity date" size="large" />
           </Form.Item>
-          <Form.Item label="Targeted Points">
+          <Form.Item name={"targetPoints"} label="Targeted Points">
             <Input placeholder="Enter target points" size="large" />
           </Form.Item>
 

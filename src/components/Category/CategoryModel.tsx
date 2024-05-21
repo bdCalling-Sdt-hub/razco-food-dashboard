@@ -1,7 +1,8 @@
 import { Form, Input, Modal } from "antd";
 import { Image } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../share/Button";
+import { useCreateCategoryMutation } from "@/redux/slices/admin/categoryApi";
 
 interface OfferModelProps {
   open: boolean;
@@ -10,6 +11,32 @@ interface OfferModelProps {
 
 const CategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
   const [imageUrl, setImageUrl] = useState("");
+  const [image, setImage] = useState(null);
+  const [categoryName, setCategoryName] = useState("");
+  const [createCategory, { isLoading, data, isSuccess, error }] =
+    useCreateCategoryMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Category add Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        // message.error(errorData.data.message);
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
+  const formData = new FormData();
+  if (image) {
+    formData.append("bannerImage", image);
+  }
   const handleCancel = () => {
     setOpen(false);
   };
@@ -20,6 +47,22 @@ const CategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
     const file = e.target.files?.[0];
     const url = URL.createObjectURL(file);
     setImageUrl(url);
+    setImage(file);
+  };
+  const handleCategory = async () => {
+    if (!image) {
+      alert("Please select an image");
+      return;
+    }
+
+    formData.append("categoryName", categoryName);
+    formData.append("categoryImage", image);
+
+    try {
+      await createCategory(formData);
+    } catch (err: any) {
+      console.error(err.message);
+    }
   };
   return (
     <div>
@@ -54,11 +97,17 @@ const CategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
         </div>
         <Form onFinish={onFinish} layout="vertical">
           <Form.Item label="Category Name">
-            <Input placeholder="Category name" size="large" />
+            <Input
+              onChange={(e) => setCategoryName(e.target.value)}
+              placeholder="Category name"
+              size="large"
+            />
           </Form.Item>
         </Form>
 
-        <Button className="px-10 mx-auto mt-5">Save</Button>
+        <Button onClick={handleCategory} className="px-10 mx-auto mt-5">
+          Save
+        </Button>
       </Modal>
     </div>
   );

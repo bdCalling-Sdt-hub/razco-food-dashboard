@@ -1,28 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Title from "@/components/share/Title";
+import {
+  useGetUsersQuery,
+  useUpdateUserStatusMutation,
+} from "@/redux/slices/admin/userManageApi";
 import { Input, Select, Table } from "antd";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const data = [...Array(50).keys()].map((index) => ({
-  productId: `${index}-INV001"`,
-  productsName: "Cucumber",
-  barcode: "4564156",
-  category: "foods",
-  quantity: "500gm",
-  discount: "0%",
-  price: "$15",
-  stock: "500",
-  status: "Available",
-  action: "",
-}));
-
-const statusTypes = ["Active", "Deactive"];
+const statusTypes = ["active", "deactive"];
 
 const UserManagement = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState("Active");
-  const pageSize = 10;
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
+
+  const { data: usersData } = useGetUsersQuery<Record<string, any>>({
+    ...query,
+  });
+  const data = usersData?.data?.data;
+  const [updateUserStatus, { error, isSuccess }] =
+    useUpdateUserStatusMutation();
+  useEffect(() => {
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [error, isSuccess]);
+  const handleOnchange = async (e: string, id: string) => {
+    try {
+      const res = await updateUserStatus({ status: e, _id: id });
+      if (res?.data?.success === true) {
+        alert("Status Updated");
+      }
+    } catch (error: any) {
+      console.log(error?.message);
+    }
+  };
 
   const columns = [
     {
@@ -72,8 +94,8 @@ const UserManagement = () => {
       render: (_: any, data: any) => (
         <div className="text-right">
           <Select
-            defaultValue={status}
-            onChange={(e) => setStatus(e)}
+            defaultValue={data.status}
+            onChange={(e) => handleOnchange(e, data?._id)}
             style={{ width: 100, height: "25px" }}
             options={statusTypes.map((st) => ({
               label: st,
@@ -85,8 +107,11 @@ const UserManagement = () => {
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
   return (
@@ -101,10 +126,11 @@ const UserManagement = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: usersData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
     </div>

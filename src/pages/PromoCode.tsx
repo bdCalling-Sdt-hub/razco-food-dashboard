@@ -1,36 +1,59 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import PromoCodeModel from "@/components/PromoCode/PromoCodeModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
+import {
+  useDeleteCouponMutation,
+  useGetCouponsQuery,
+} from "@/redux/slices/admin/couponApi";
 import { Select, Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index + 1}`,
-  couponCode: "razco",
-  discount: "50%",
-  validityDate: "24-5-2024",
-  targetPoints: 500,
-  action: "",
-}));
-
-const offers = ["Eid", "Big seal"];
+import { useEffect, useState } from "react";
 
 const PromoCode = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
   const [offer, setOffer] = useState("Eid");
   const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);
   };
-  const pageSize = 10;
+  const { data: couponData } = useGetCouponsQuery<Record<string, any>>({});
+
+  const data = couponData?.data?.data;
+  const [deleteCoupon, { isSuccess, error }] = useDeleteCouponMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Admin Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
+
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
+      render: (text: string, record: any, index: number) => index + 1,
     },
     {
       title: "Coupon Name",
@@ -61,7 +84,10 @@ const PromoCode = () => {
           <button onClick={showModal} className="text-primary">
             <Edit />
           </button>
-          <button className="text-red-500">
+          <button
+            onClick={() => handleDelete(data?._id)}
+            className="text-red-500"
+          >
             <Trash2 />
           </button>
         </div>
@@ -69,27 +95,24 @@ const PromoCode = () => {
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
-  const handleOffer = (value: any) => {
-    setOffer(value);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCoupon(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
   };
-
   return (
     <div>
       <Title>Manage Promo Code</Title>
       <div className="flex justify-between items-center mb-10 mt-4">
-        <Select
-          defaultValue={offer}
-          style={{ width: 150, height: "45px" }}
-          onChange={handleOffer}
-          options={offers.map((offer) => ({
-            label: offer,
-            value: offer,
-          }))}
-        />
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Create Promo Code
         </Button>
@@ -98,10 +121,11 @@ const PromoCode = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: couponData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
       <PromoCodeModel open={open} setOpen={setOpen} />

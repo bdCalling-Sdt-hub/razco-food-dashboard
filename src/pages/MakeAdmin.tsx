@@ -2,34 +2,62 @@
 import AdminModel from "@/components/MakeAdmin/AdminModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
+import { getUserInfo } from "@/redux/services/auth.service";
+import {
+  useDeleteAdminMutation,
+  useGetAllAdminsQuery,
+} from "@/redux/slices/admin/adminManageApi";
 import { Table } from "antd";
 import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index + 1}`,
-  fullName: "Sergio Marci",
-  email: "sergio@gmail.com",
-  userType: "admin",
-  action: "",
-}));
+import { useEffect, useState } from "react";
 
 const MakeAdmin = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
+  const { data: adminData } = useGetAllAdminsQuery<Record<string, any>>({
+    ...query,
+  });
+
+  console.log(adminData);
   const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);
   };
-  const pageSize = 10;
+  const [deleteAdmin, { isSuccess, error, data }] = useDeleteAdminMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Admin Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
+
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
+      render: (text: string, record: any, index: number) => index + 1,
     },
     {
       title: "Full Name",
-      dataIndex: "fullName",
+      dataIndex: "name",
       key: "fullName",
     },
     {
@@ -39,7 +67,7 @@ const MakeAdmin = () => {
     },
     {
       title: "User Type",
-      dataIndex: "userType",
+      dataIndex: "role",
       key: "userType",
     },
     {
@@ -48,7 +76,10 @@ const MakeAdmin = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button className="text-red-500">
+          <button
+            onClick={() => handleDelete(data?._id)}
+            className="text-red-500"
+          >
             <Trash2 />
           </button>
         </div>
@@ -56,8 +87,18 @@ const MakeAdmin = () => {
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
+  };
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteAdmin(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
   };
 
   return (
@@ -69,13 +110,14 @@ const MakeAdmin = () => {
         </Button>
       </div>
       <Table
-        dataSource={data}
+        dataSource={adminData?.data?.data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: adminData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
       <AdminModel open={open} setOpen={setOpen} />

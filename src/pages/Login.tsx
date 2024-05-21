@@ -1,13 +1,40 @@
 import AuthWrapper from "@/components/share/AuthWrapper";
 import Title from "@/components/share/Title";
+import { storeUserInfo } from "@/redux/services/auth.service";
+import { useAdminLoginMutation } from "@/redux/slices/admin/adminManageApi";
 import { Button, Checkbox, Form, Input } from "antd";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [adminLogin, { isLoading, data, isSuccess, error }] =
+    useAdminLoginMutation();
   const navigate = useNavigate();
-  const onFinish = (values: any) => {
-    console.log(values);
-    navigate("/");
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Login Successfully");
+        storeUserInfo({ accessToken: data?.data });
+        navigate("/");
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        // message.error(errorData.data.message);
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, navigate]);
+  const onFinish = async (data: any) => {
+    try {
+      await adminLogin(data);
+    } catch (err: any) {
+      console.error(err.message);
+    }
   };
   return (
     <AuthWrapper>
@@ -41,7 +68,7 @@ const Login = () => {
             className="bg-secondary h-12 text-white text-lg w-full mt-6"
             htmlType="submit"
           >
-            Sign In
+            {isLoading ? "Loading.." : "Sign In"}
           </Button>
         </Form.Item>
       </Form>

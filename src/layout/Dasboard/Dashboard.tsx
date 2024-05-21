@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { removeUserInfo } from "@/redux/services/auth.service";
+import { authKey } from "@/constants/storageKey";
 const { Header, Sider, Content } = Layout;
 
 const menuItems = [
@@ -140,6 +142,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    removeUserInfo(authKey);
     navigate("/auth/login");
   };
   return (

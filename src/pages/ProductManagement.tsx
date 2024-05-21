@@ -1,32 +1,66 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
+import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
+import { useGetOffersQuery } from "@/redux/slices/admin/offerApi";
+import {
+  useDeleteProductMutation,
+  useGetProductsQuery,
+} from "@/redux/slices/admin/productManagementApi";
 import { Input, Select, Table } from "antd";
 import { Edit, Plus, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const data = [...Array(50).keys()].map((index) => ({
-  productId: `${index}-INV001"`,
-  productsName: "Cucumber",
-  barcode: "4564156",
-  category: "foods",
-  quantity: "500gm",
-  discount: "0%",
-  price: "$15",
-  stock: "500",
-  status: "Available",
-  action: "",
-}));
-
-const categories = ["Foods", "Bevarage", "Cold"];
-const offers = ["Eid", "Big seal"];
-
 const ProductManagement = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [category, setCategory] = useState("Foods");
-  const [offer, setOffer] = useState("Eid");
-  const pageSize = 10;
+  //! Query
+  const query: Record<string, any> = {};
+
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  const [search, setSearch] = useState<string>("");
+  const [category, setCategory] = useState("");
+  const [offer, setOffer] = useState("");
+
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
+  if (search) {
+    query["search"] = search;
+  }
+  if (offer) {
+    query["offer"] = offer;
+  }
+  if (category) {
+    query["category"] = category;
+  }
+  const { data: productData } = useGetProductsQuery<Record<string, any>>({
+    ...query,
+  });
+  const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
+  const { data: offerData } = useGetOffersQuery<Record<string, any>>({});
+  // console.log(offerData);
+  const data = productData?.data?.data;
+
+  const [deleteProduct, { isSuccess, error }] = useDeleteProductMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Admin Delete Successfully");
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess]);
+
   const columns = [
     {
       title: "Product ID",
@@ -35,8 +69,8 @@ const ProductManagement = () => {
     },
     {
       title: "Product Name",
-      dataIndex: "productsName",
-      key: "productsName",
+      dataIndex: "productName",
+      key: "productName",
     },
     {
       title: "Barcode",
@@ -55,12 +89,12 @@ const ProductManagement = () => {
     },
     {
       title: "Quantity",
-      dataIndex: "quantity",
+      dataIndex: "store",
       key: "quantity",
     },
     {
       title: "Stock",
-      dataIndex: "stock",
+      dataIndex: "status",
       key: "stock",
     },
     {
@@ -80,15 +114,24 @@ const ProductManagement = () => {
             </Link>
           </button>
           <button className="text-red-500">
-            <Trash2 />
+            <Trash2 onClick={() => handleDelete(data?._id)} />
           </button>
         </div>
       ),
     },
   ];
-
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProduct(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
   const handleCategory = (value: any) => {
@@ -107,24 +150,31 @@ const ProductManagement = () => {
             prefix={<Search />}
             className="w-4/4 h-11"
             placeholder="Search"
+            onChange={(e) => setSearch(e.target.value)}
           />
           <Select
-            defaultValue={category}
+            defaultValue={"Select Category"}
             style={{ width: 200, height: "45px" }}
             onChange={handleCategory}
-            options={categories.map((cgt) => ({
-              label: cgt,
-              value: cgt,
-            }))}
+            options={[
+              { label: "All", value: "" },
+              ...(categoryData?.data?.data.map((cgt: any) => ({
+                label: cgt?.categoryName,
+                value: cgt?._id,
+              })) || []),
+            ]}
           />
           <Select
-            defaultValue={offer}
+            defaultValue="Select Offer"
             style={{ width: 200, height: "45px" }}
             onChange={handleOffer}
-            options={offers.map((offer) => ({
-              label: offer,
-              value: offer,
-            }))}
+            options={[
+              { label: "All", value: "" },
+              ...(offerData?.data?.data?.map((offer: any) => ({
+                label: offer?.offerName,
+                value: offer?._id,
+              })) || []),
+            ]}
           />
         </div>
         <Link to="/add-product">
@@ -135,10 +185,11 @@ const ProductManagement = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: productData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
     </div>

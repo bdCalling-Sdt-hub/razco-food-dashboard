@@ -3,44 +3,84 @@
 import CoverModel from "@/components/CoverPage/CoverModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
-import { Select, Table } from "antd";
+import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-import image from "../assets/vegetable.png";
+import { useEffect, useState } from "react";
 
-const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index}-INV001"`,
-  image: <img src={image} className="w-16" />,
-  name: 500,
-  validityDate: "24-5-2024",
-  action: "",
-}));
-
-const offers = ["Eid", "Big seal"];
+import {
+  useDeleteCoverMutation,
+  useGetCoversQuery,
+} from "@/redux/slices/admin/coverApi";
+import { imageURL } from "@/redux/api/baseApi";
 
 const CoverPage = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
   const [open, setOpen] = useState(false);
+  const { data: coverData } = useGetCoversQuery<Record<string, any>>({
+    ...query,
+  });
+  // console.log(coverData);
+  const newData = coverData?.data?.data.map((item: any, index: number) => ({
+    sNo: `${index + 1}`,
+    bannerName: item?.bannerName,
+    bannerImage: (
+      <img
+        style={{
+          width: 150,
+        }}
+        src={`${imageURL}/${item?.bannerImage}`}
+        alt={item?.bannerName}
+      />
+    ),
+    validityDate: 5,
+    action: "",
+  }));
+
+  const [deleteCover, { isSuccess, error, data }] = useDeleteCoverMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Banner Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
   const showModal = () => {
     setOpen(true);
   };
-  const [offer, setOffer] = useState("Eid");
-  const pageSize = 10;
+
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
+      render: (text: string, record: any, index: number) => index + 1,
     },
     {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
+      title: "image",
+      dataIndex: "bannerImage",
+      key: "bannerImage",
     },
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "bannerName",
+      key: "bannerName",
     },
     {
       title: "Validity Date",
@@ -56,7 +96,10 @@ const CoverPage = () => {
           <button onClick={showModal} className="text-primary">
             <Edit />
           </button>
-          <button className="text-red-500">
+          <button
+            onClick={() => handleDelete(data?._id)}
+            className="text-red-500"
+          >
             <Trash2 />
           </button>
         </div>
@@ -64,39 +107,38 @@ const CoverPage = () => {
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
-  const handleOffer = (value: any) => {
-    setOffer(value);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCover(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
   };
 
   return (
     <div>
       <Title>Cover Page</Title>
       <div className="flex justify-between items-center mb-10 mt-4">
-        <Select
-          defaultValue={offer}
-          style={{ width: 150, height: "45px" }}
-          onChange={handleOffer}
-          options={offers.map((offer) => ({
-            label: offer,
-            value: offer,
-          }))}
-        />
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Add Cover
         </Button>
       </div>
       <Table
-        dataSource={data}
+        dataSource={newData}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: coverData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
       <CoverModel open={open} setOpen={setOpen} />

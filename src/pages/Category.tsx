@@ -1,35 +1,60 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import CategoryModel from "@/components/Category/CategoryModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
-import { Select, Table } from "antd";
+import {
+  useDeleteCategoryMutation,
+  useGetCategorysQuery,
+} from "@/redux/slices/admin/categoryApi";
+import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index + 1}`,
-  categoryName: "Foods",
-  storeProduct: 500,
-  subCatagories: 5,
-  action: "",
-}));
-
-const categories = ["Foods", "Vegetable", "Fruits"];
+import { useEffect, useState } from "react";
 
 const Category = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
+
   const [open, setOpen] = useState(false);
+  const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
+  //@ts-ignore
+
+  const [deleteCategory, { isSuccess, error, data }] =
+    useDeleteCategoryMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Offer Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
   const showModal = () => {
     setOpen(true);
   };
-  const [category, setCategory] = useState("Vegetable");
-  const pageSize = 10;
+
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
+      render: (text: string, record: any, index: number) => index + 1,
     },
     {
       title: "Category Name",
@@ -55,7 +80,10 @@ const Category = () => {
           <button onClick={showModal} className="text-primary">
             <Edit />
           </button>
-          <button className="text-red-500">
+          <button
+            onClick={() => handleDelete(data?._id)}
+            className="text-red-500"
+          >
             <Trash2 />
           </button>
         </div>
@@ -63,39 +91,37 @@ const Category = () => {
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
-  const handleCategory = (value: any) => {
-    setCategory(value);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCategory(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
   };
-
   return (
     <div>
       <Title>Category Management</Title>
       <div className="flex justify-between items-center mb-10 mt-4">
-        <Select
-          defaultValue={category}
-          style={{ width: 150, height: "45px" }}
-          onChange={handleCategory}
-          options={categories.map((ct) => ({
-            label: ct,
-            value: ct,
-          }))}
-        />
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Add Category
         </Button>
       </div>
       <Table
-        dataSource={data}
+        dataSource={categoryData?.data?.data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: categoryData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
       <CategoryModel open={open} setOpen={setOpen} />

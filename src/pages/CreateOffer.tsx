@@ -1,34 +1,64 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import OfferModel from "@/components/CreateOffer/OfferModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
+import {
+  useDeleteOfferMutation,
+  useGetOffersQuery,
+} from "@/redux/slices/admin/offerApi";
 import { Select, Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index}-INV001"`,
-  offerName: "Eid Offer",
-  store: 500,
-  action: "",
-}));
+import { useEffect, useState } from "react";
 
 const offers = ["Eid", "Big seal"];
 
 const CreateOffer = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
   const [open, setOpen] = useState(false);
+  const { data: offerData } = useGetOffersQuery<Record<string, any>>({
+    ...query,
+  });
+
+  const data = offerData?.data?.data;
+
+  const [deleteOffer, { isSuccess, error }] = useDeleteOfferMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Offer Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
   const showModal = () => {
     setOpen(true);
   };
 
   const [offer, setOffer] = useState("Eid");
-  const pageSize = 10;
+
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
+      render: (text: string, record: any, index: number) => index + 1,
     },
     {
       title: "Offer Name",
@@ -37,8 +67,8 @@ const CreateOffer = () => {
     },
     {
       title: "Store",
-      dataIndex: "store",
-      key: "store",
+      dataIndex: "percentage",
+      key: "percentage",
     },
     {
       title: <div className="text-right">Action</div>,
@@ -49,7 +79,10 @@ const CreateOffer = () => {
           <button className="text-primary">
             <Edit />
           </button>
-          <button className="text-red-500">
+          <button
+            onClick={() => handleDelete(data?._id)}
+            className="text-red-500"
+          >
             <Trash2 />
           </button>
         </div>
@@ -57,14 +90,23 @@ const CreateOffer = () => {
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
   const handleOffer = (value: any) => {
     setOffer(value);
   };
-
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteOffer(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
   return (
     <div>
       <Title>Manage Offer</Title>
@@ -86,10 +128,11 @@ const CreateOffer = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: offerData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
       <OfferModel open={open} setOpen={setOpen} />

@@ -1,12 +1,58 @@
 import Title from "@/components/share/Title";
+import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
+import { useGetOffersQuery } from "@/redux/slices/admin/offerApi";
+import { useAddProductMutation } from "@/redux/slices/admin/productManagementApi";
+import { useGetSubCategoriesQuery } from "@/redux/slices/admin/subCategoryApi";
 import { Button, Col, Form, Input, Row, Select, Upload } from "antd";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const { Option } = Select;
 const { TextArea } = Input;
 const AddProduct = () => {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const [imageUrl, setImageUrl] = useState<File | null>(null);
+  const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
+  const { data: offerData } = useGetOffersQuery<Record<string, any>>({});
+  const { data: subCategoryData } = useGetSubCategoriesQuery<
+    Record<string, any>
+  >({});
+  const [addProduct, { isLoading, isSuccess, error, data }] =
+    useAddProductMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Product add Successfully");
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        // message.error(errorData.data.message);
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess]);
+  // const onFinish = async (values: any) => {
+  //   try {
+  //     await addProduct(values);
+  //   } catch (error: any) {
+  //     console.log(error?.message);
+  //   }
+  // };
+  const onFinish = async (values: any) => {
+    try {
+      const formData = new FormData();
+      formData.append("productImage", imageUrl as File);
+      Object.keys(values).forEach((key) => {
+        formData.append(key, values[key]);
+      });
+      await addProduct(formData);
+    } catch (error: any) {
+      console.log(error?.message);
+    }
   };
 
   const onCategoryChange = (value: any) => {
@@ -15,13 +61,23 @@ const AddProduct = () => {
   const onSubcategoryChange = (value: any) => {
     console.log(value);
   };
+  const onOfferChange = (value: any) => {
+    console.log(value);
+  };
 
   const normFile = (e: any) => {
+    console.log(e);
     if (Array.isArray(e)) {
       return e;
     }
+    console.log(e?.fileList);
     return e?.fileList;
   };
+  const handleImageChange = (info: any) => {
+    // console.log(info.file?.originFileObj);
+    setImageUrl(info.file?.originFileObj);
+  };
+  console.log(imageUrl);
   const initialFormValues = {
     name: "Nadir on the go",
     email: "nadir@gmail.com",
@@ -53,7 +109,11 @@ const AddProduct = () => {
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                   >
-                    <Upload action="/upload.do" listType="picture-card">
+                    <Upload
+                      onChange={handleImageChange}
+                      listType="picture-card"
+                      name="productImage"
+                    >
                       <button
                         style={{
                           border: 0,
@@ -119,6 +179,16 @@ const AddProduct = () => {
                   <Input size="large" placeholder="Enter barcode" />
                 </Form.Item>
               </Col>
+              <Col span={12}>
+                <Form.Item label="Store" name="store">
+                  <Input size="large" placeholder="Enter Store" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Expire Date" name="expireDate">
+                  <Input size="large" placeholder="Enter Expire Date" />
+                </Form.Item>
+              </Col>
               <Col span={24}>
                 <Form.Item label="Product Price" name="price">
                   <Input size="large" placeholder="Product price" />
@@ -129,11 +199,14 @@ const AddProduct = () => {
                   <Select
                     placeholder="Select a offer"
                     size="large"
-                    onChange={onCategoryChange}
+                    onChange={onOfferChange}
                   >
-                    <Option value="male">Eid</Option>
-                    <Option value="female">Big Deal</Option>
-                    <Option value="other">Summer</Option>
+                    {offerData &&
+                      offerData.data.data.map((ct: any) => (
+                        <Option key={ct._id} value={ct._id.toString()}>
+                          {ct.offerName}
+                        </Option>
+                      ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -154,9 +227,12 @@ const AddProduct = () => {
                     size="large"
                     onChange={onCategoryChange}
                   >
-                    <Option value="male">Foods</Option>
-                    <Option value="female">Vegetable</Option>
-                    <Option value="other">Meat</Option>
+                    {categoryData &&
+                      categoryData.data.data.map((ct: any) => (
+                        <Option key={ct._id} value={ct.categoryName}>
+                          {ct.categoryName}
+                        </Option>
+                      ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -167,9 +243,12 @@ const AddProduct = () => {
                     size="large"
                     onChange={onSubcategoryChange}
                   >
-                    <Option value="male">Foods</Option>
-                    <Option value="female">Vegetable</Option>
-                    <Option value="other">Meat</Option>
+                    {subCategoryData &&
+                      subCategoryData.data.data.map((ct: any) => (
+                        <Option key={ct._id} value={ct.subcategoryName}>
+                          {ct.subcategoryName}
+                        </Option>
+                      ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -180,7 +259,7 @@ const AddProduct = () => {
                 className="bg-secondary px-28 h-10 text-lg ml-auto block"
                 htmlType="submit"
               >
-                Publish
+                {isLoading ? "Publishing.." : "Publish"}
               </Button>
             </Form.Item>
           </Col>

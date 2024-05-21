@@ -1,12 +1,38 @@
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
+import { useCreateAboutUsMutation } from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const About = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
+  const [createAboutUs, { isLoading, data, isSuccess, error }] =
+    useCreateAboutUsMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("About us add Successfully");
+      }
+    }
 
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        // message.error(errorData.data.message);
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess]);
+  const handleCreate = async () => {
+    try {
+      await createAboutUs({ content });
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
   return (
     <div>
       <Title className="mb-4">About</Title>
@@ -17,7 +43,9 @@ const About = () => {
         onBlur={(newContent) => setContent(newContent)}
       />
       <div className="flex justify-end mt-5">
-        <Button>Save Changes</Button>
+        <Button onClick={handleCreate}>
+          {isLoading ? "Saving.." : "Save Changes"}
+        </Button>
       </div>
     </div>
   );

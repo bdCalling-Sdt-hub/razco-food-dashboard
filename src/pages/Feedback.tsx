@@ -1,24 +1,56 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FeedbackModel from "@/components/Feedback/FeedbackModel";
 import Title from "@/components/share/Title";
+import {
+  useDeleteFeedbackMutation,
+  useFeedbacksQuery,
+} from "@/redux/slices/admin/feedbackApi";
 import { Input, Table } from "antd";
 import { Reply, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const data = [...Array(50).keys()].map((index) => ({
-  name: `${index}-Fahim"`,
-  feedback: "Where then did who disporting him pleasure so sorrow none..",
-  time: "8:50 AM",
-  action: "",
-}));
+import { useEffect, useState } from "react";
+import { format } from "timeago.js";
 
 const Feedback = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
   const [open, setOpen] = useState(false);
-  const showModal = () => {
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(
+    null
+  );
+
+  const { data: feedBackData } = useFeedbacksQuery<Record<string, any>>({
+    ...query,
+  });
+  const data = feedBackData?.data;
+  const [deleteFeedback, { isSuccess, error }] = useDeleteFeedbackMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Feedback Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
+  const showModal = (id: string) => {
+    setSelectedFeedbackId(id);
     setOpen(true);
   };
-  const pageSize = 10;
+
   const columns = [
     {
       title: "Name",
@@ -27,13 +59,14 @@ const Feedback = () => {
     },
     {
       title: "Feedback",
-      dataIndex: "feedback",
-      key: "feedback",
+      dataIndex: "description",
+      key: "description",
     },
     {
       title: "Time",
-      dataIndex: "time",
-      key: "time",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt: string) => format(createdAt),
     },
     {
       title: "Status",
@@ -43,9 +76,9 @@ const Feedback = () => {
         <div className="flex items-center gap-2 justify-end">
           <button
             className="flex items-center border rounded-md px-1"
-            onClick={showModal}
+            onClick={() => showModal(data?._id)}
           >
-            <Reply /> Pending
+            <Reply /> {data?.status}
           </button>
         </div>
       ),
@@ -57,15 +90,24 @@ const Feedback = () => {
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
           <button className="text-red-500">
-            <Trash2 />
+            <Trash2 onClick={() => handleDelete(data?._id)} />
           </button>
         </div>
       ),
     },
   ];
-
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteFeedback({ _id: id });
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
   return (
@@ -80,13 +122,18 @@ const Feedback = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: feedBackData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
-      <FeedbackModel open={open} setOpen={setOpen} />
+      <FeedbackModel
+        open={open}
+        setOpen={setOpen}
+        feedbackId={selectedFeedbackId}
+      />
     </div>
   );
 };

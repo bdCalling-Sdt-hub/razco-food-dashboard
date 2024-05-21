@@ -2,33 +2,59 @@
 import SubcategoryModel from "@/components/Category/SubcategoryModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
-import { Select, Table } from "antd";
+import {
+  useDeleteSubCategoryMutation,
+  useGetSubCategoriesQuery,
+} from "@/redux/slices/admin/subCategoryApi";
+
+import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const data = [...Array(50).keys()].map((index) => ({
-  sNo: `${index + 1}`,
-  subcategoryName: "Banana",
-  storeProduct: 500,
-  subCatagories: 5,
-  action: "",
-}));
-
-const categories = ["Foods", "Vegetable", "Fruits"];
+import { useEffect, useState } from "react";
 
 const SubCategory = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [category, setCategory] = useState("Vegetable");
+  //! Query
+  const query: Record<string, any> = {};
+  const [page, setPage] = useState<number>(1);
+  const [size, setSize] = useState<number>(10);
+  // set query for filter and search
+  query["limit"] = size;
+  query["page"] = page;
   const [open, setOpen] = useState(false);
+
+  const { data: subCategoryData } = useGetSubCategoriesQuery<
+    Record<string, any>
+  >({ ...query });
+  const data = subCategoryData?.data?.data;
+  const [deleteSubCategory, { isSuccess, error }] =
+    useDeleteSubCategoryMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Sub Category Delete Successfully");
+        setOpen(false);
+      }
+    }
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess, setOpen]);
   const showModal = () => {
     setOpen(true);
   };
-  const pageSize = 10;
+
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
+      render: (text: string, record: any, index: number) => index + 1,
     },
     {
       title: "Subcategory Name",
@@ -37,7 +63,7 @@ const SubCategory = () => {
     },
     {
       title: "Store Products",
-      dataIndex: "storeProduct",
+      dataIndex: "clickedCount",
       key: "storeProduct",
     },
     {
@@ -50,34 +76,31 @@ const SubCategory = () => {
             <Edit />
           </button>
           <button className="text-red-500">
-            <Trash2 />
+            <Trash2 onClick={() => handleDelete(data?._id)} />
           </button>
         </div>
       ),
     },
   ];
 
-  const handlePage = (page: any) => {
-    setCurrentPage(page);
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) {
+      setSize(pageSize);
+    }
   };
 
-  const handleCategory = (value: any) => {
-    setCategory(value);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteSubCategory(id);
+    } catch (error: any) {
+      console.error(error.message);
+    }
   };
-
   return (
     <div>
       <Title>Sub Category Management</Title>
       <div className="flex justify-between items-center mb-10 mt-4">
-        <Select
-          defaultValue={category}
-          style={{ width: 150, height: "45px" }}
-          onChange={handleCategory}
-          options={categories.map((ct) => ({
-            label: ct,
-            value: ct,
-          }))}
-        />
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Add Sub Category
         </Button>
@@ -86,10 +109,11 @@ const SubCategory = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize,
-          total: 50,
-          current: currentPage,
-          onChange: handlePage,
+          pageSize: size,
+          total: subCategoryData?.data?.pagination?.total,
+          current: page,
+          onChange: handlePageChange,
+          showSizeChanger: true,
         }}
       />
       <SubcategoryModel open={open} setOpen={setOpen} />

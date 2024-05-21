@@ -1,21 +1,56 @@
 import { Edit } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button, Col, Form, Input, Row } from "antd";
+import {
+  useMyProfileQuery,
+  useUpdateProfileMutation,
+} from "@/redux/slices/admin/settingApi";
 
 const Profile = () => {
   const [openEdit, setOpenEdit] = useState(false);
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  // const [image, setImage] = useState(null);
+
+  const { data: profileData } = useMyProfileQuery({});
+  const initialFormValues = profileData?.data;
+  const [updateProfile, { isLoading, isSuccess, error }] =
+    useUpdateProfileMutation();
+
+  useEffect(() => {
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [error, isSuccess]);
+  const onFinish = async (values: any) => {
+    try {
+      const res = await updateProfile({
+        name: values?.name,
+        phone: values?.phone,
+        address: values?.address,
+        gender: values?.gender,
+      });
+
+      if (res?.data?.success === true) {
+        alert("Profile Update Successful");
+      }
+    } catch (error: any) {
+      console.log(error?.message);
+    }
   };
 
-  const initialFormValues = {
-    name: "Nadir on the go",
-    email: "nadir@gmail.com",
-    phoneNumber: "4651261025",
-    dateOfBirth: "25-4-2003",
-    location: "Banasree,Dahaka",
-  };
+  // console.log(initialFormValues);
+  // const initialFormValues = {
+  //   name: "Nadir on the go",
+  //   email: "nadir@gmail.com",
+  //   phoneNumber: "4651261025",
+  //   dateOfBirth: "25-4-2003",
+  //   location: "Banasree,Dahaka",
+  // };
 
   return (
     <div className="w-2/4 mx-auto">
@@ -32,7 +67,7 @@ const Profile = () => {
           alt=""
           className="w-28 h-28 rounded-full inline-block"
         />
-        <h2 className="text-2xl mt-2">Pirates</h2>
+        <h2 className="text-2xl mt-2">{initialFormValues?.name}</h2>
       </div>
 
       <div>
@@ -56,7 +91,7 @@ const Profile = () => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Phone Number" name="phoneNumber">
+                <Form.Item label="Phone Number" name="phone">
                   <Input size="large" readOnly />
                 </Form.Item>
               </Col>
@@ -67,7 +102,7 @@ const Profile = () => {
               </Col>
 
               <Col span={24}>
-                <Form.Item label="Location" name="location">
+                <Form.Item label="Location" name="address">
                   <Input size="large" readOnly />
                 </Form.Item>
               </Col>
@@ -94,11 +129,11 @@ const Profile = () => {
               </Col>
               <Col span={12}>
                 <Form.Item label="Email" name="email">
-                  <Input size="large" />
+                  <Input size="large" readOnly />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Phone Number" name="phoneNumber">
+                <Form.Item label="Phone Number" name="phone">
                   <Input size="large" />
                 </Form.Item>
               </Col>
@@ -109,7 +144,7 @@ const Profile = () => {
               </Col>
 
               <Col span={24}>
-                <Form.Item label="Location" name="location">
+                <Form.Item label="Location" name="address">
                   <Input size="large" />
                 </Form.Item>
               </Col>
@@ -120,7 +155,7 @@ const Profile = () => {
                 className="bg-secondary h-10 text-lg"
                 htmlType="submit"
               >
-                Save changes
+                {isLoading ? "Saving.." : "Save changes"}
               </Button>
             </Form.Item>
           </Form>

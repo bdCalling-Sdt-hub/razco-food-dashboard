@@ -1,12 +1,38 @@
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
+import { useCreatePrivacyPolicyMutation } from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const PrivacyPolicy = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
+  const [createPrivacy, { isLoading, data, isSuccess, error }] =
+    useCreatePrivacyPolicyMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        alert("Policy add Successfully");
+      }
+    }
 
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        // message.error(errorData.data.message);
+        alert(errorData.data.message);
+      } else {
+        console.error("Login error:", error);
+      }
+    }
+  }, [data, error, isSuccess]);
+  const handlePrivacy = async () => {
+    try {
+      await createPrivacy({ content });
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
   return (
     <div>
       <Title className="mb-4">Privacy Policy</Title>
@@ -17,7 +43,9 @@ const PrivacyPolicy = () => {
         onBlur={(newContent) => setContent(newContent)}
       />
       <div className="flex justify-end mt-5">
-        <Button>Save Changes</Button>
+        <Button onClick={handlePrivacy}>
+          {isLoading ? "Saving..." : "Save Changes"}
+        </Button>
       </div>
     </div>
   );
