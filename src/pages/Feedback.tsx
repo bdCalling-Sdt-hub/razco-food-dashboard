@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import FeedbackModel from "@/components/Feedback/FeedbackModel";
 import Title from "@/components/share/Title";
 import {

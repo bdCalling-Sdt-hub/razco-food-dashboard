@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import SubcategoryModel from "@/components/Category/SubcategoryModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";

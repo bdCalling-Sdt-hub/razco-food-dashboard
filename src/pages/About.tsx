@@ -19,7 +19,7 @@ const About = () => {
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
-        // message.error(errorData.data.message);
+
         alert(errorData.data.message);
       } else {
         console.error("Login error:", error);

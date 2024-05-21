@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminModel from "@/components/MakeAdmin/AdminModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
-import { getUserInfo } from "@/redux/services/auth.service";
+
 import {
   useDeleteAdminMutation,
   useGetAllAdminsQuery,
@@ -23,7 +22,6 @@ const MakeAdmin = () => {
     ...query,
   });
 
-  console.log(adminData);
   const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);

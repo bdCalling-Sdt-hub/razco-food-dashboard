@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import PromoCodeModel from "@/components/PromoCode/PromoCodeModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
@@ -8,7 +5,7 @@ import {
   useDeleteCouponMutation,
   useGetCouponsQuery,
 } from "@/redux/slices/admin/couponApi";
-import { Select, Table } from "antd";
+import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -20,7 +17,7 @@ const PromoCode = () => {
   // set query for filter and search
   query["limit"] = size;
   query["page"] = page;
-  const [offer, setOffer] = useState("Eid");
+
   const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);

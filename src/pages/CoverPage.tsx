@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import CoverModel from "@/components/CoverPage/CoverModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
@@ -25,7 +23,7 @@ const CoverPage = () => {
   const { data: coverData } = useGetCoversQuery<Record<string, any>>({
     ...query,
   });
-  // console.log(coverData);
+
   const newData = coverData?.data?.data.map((item: any, index: number) => ({
     sNo: `${index + 1}`,
     bannerName: item?.bannerName,

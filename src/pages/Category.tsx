@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import CategoryModel from "@/components/Category/CategoryModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
@@ -23,7 +20,6 @@ const Category = () => {
 
   const [open, setOpen] = useState(false);
   const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
-  //@ts-ignore
 
   const [deleteCategory, { isSuccess, error, data }] =
     useDeleteCategoryMutation();

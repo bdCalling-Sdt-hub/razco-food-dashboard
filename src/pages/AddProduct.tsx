@@ -35,13 +35,7 @@ const AddProduct = () => {
       }
     }
   }, [data, error, isSuccess]);
-  // const onFinish = async (values: any) => {
-  //   try {
-  //     await addProduct(values);
-  //   } catch (error: any) {
-  //     console.log(error?.message);
-  //   }
-  // };
+
   const onFinish = async (values: any) => {
     try {
       const formData = new FormData();

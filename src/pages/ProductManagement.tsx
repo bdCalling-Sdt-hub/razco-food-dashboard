@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
@@ -39,7 +38,7 @@ const ProductManagement = () => {
   });
   const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
   const { data: offerData } = useGetOffersQuery<Record<string, any>>({});
-  // console.log(offerData);
+
   const data = productData?.data?.data;
 
   const [deleteProduct, { isSuccess, error }] = useDeleteProductMutation();
