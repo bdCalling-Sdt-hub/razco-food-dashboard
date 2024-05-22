@@ -6,7 +6,7 @@ import {
 import { Input, Select, Table } from "antd";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
-
+import { format } from "date-fns";
 // const data = [...Array(50).keys()].map((index) => ({
 //   orderNo: `${index + 1}`,
 //   totalItems: "Cucumber",
@@ -58,7 +58,11 @@ const OrderManagement = () => {
       console.log(error?.message);
     }
   };
-
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return format(date, "dd/MM/yyyy");
+  };
   const columns = [
     {
       title: "Order No",
@@ -79,7 +83,9 @@ const OrderManagement = () => {
       title: "Delivery Time",
       dataIndex: "deliveryDate",
       key: "deliveryDate",
+      render: (deliveryDate: string) => formatDate(deliveryDate),
     },
+
     {
       title: <div className="text-right">Action</div>,
       dataIndex: "action",

@@ -6,14 +6,14 @@ import { useReplyFeedbackMutation } from "@/redux/slices/admin/feedbackApi";
 interface OfferModelProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  feedbackId: string | null;
+  feedback: any;
 }
 
 const { TextArea } = Input;
 const FeedbackModel: React.FC<OfferModelProps> = ({
   open,
   setOpen,
-  feedbackId,
+  feedback,
 }) => {
   const [replyFeedback, { isLoading, isSuccess, error }] =
     useReplyFeedbackMutation();
@@ -29,10 +29,11 @@ const FeedbackModel: React.FC<OfferModelProps> = ({
       }
     }
   }, [error, isSuccess, setOpen]);
+
   const onFinish = async (values: any) => {
     try {
       const res = await replyFeedback({
-        _id: feedbackId,
+        _id: feedback?._id,
         replyMessage: values?.replyMessage,
       });
       if (res?.data?.success === true) {
@@ -57,13 +58,7 @@ const FeedbackModel: React.FC<OfferModelProps> = ({
       >
         <Form onFinish={onFinish} layout="vertical">
           <Form.Item label="Feedback from: Sepuda">
-            <TextArea
-              rows={5}
-              value={
-                "Scarce it grace and say mine was, later uncouth pomp had day in pangs, what ere save through few shun."
-              }
-              readOnly
-            />
+            <TextArea rows={5} value={feedback?.description} readOnly />
           </Form.Item>
           <Form.Item name="replyMessage" label="Admin reply">
             <TextArea rows={5} />

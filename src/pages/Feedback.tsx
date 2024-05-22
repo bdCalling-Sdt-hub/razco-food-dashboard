@@ -18,9 +18,7 @@ const Feedback = () => {
   query["limit"] = size;
   query["page"] = page;
   const [open, setOpen] = useState(false);
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(
-    null
-  );
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
 
   const { data: feedBackData } = useFeedbacksQuery<Record<string, any>>({
     ...query,
@@ -45,8 +43,8 @@ const Feedback = () => {
       }
     }
   }, [data, error, isSuccess, setOpen]);
-  const showModal = (id: string) => {
-    setSelectedFeedbackId(id);
+  const showModal = (data: any) => {
+    setSelectedFeedback(data);
     setOpen(true);
   };
 
@@ -75,7 +73,7 @@ const Feedback = () => {
         <div className="flex items-center gap-2 justify-end">
           <button
             className="flex items-center border rounded-md px-1"
-            onClick={() => showModal(data?._id)}
+            onClick={() => showModal(data)}
           >
             <Reply /> {data?.status}
           </button>
@@ -131,7 +129,7 @@ const Feedback = () => {
       <FeedbackModel
         open={open}
         setOpen={setOpen}
-        feedbackId={selectedFeedbackId}
+        feedback={selectedFeedback}
       />
     </div>
   );
