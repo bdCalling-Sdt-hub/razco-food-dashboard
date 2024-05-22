@@ -1,41 +1,50 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import Title from "@/components/share/Title";
+import { imageURL } from "@/redux/api/baseApi";
 import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
 import { useGetOffersQuery } from "@/redux/slices/admin/offerApi";
-import { useAddProductMutation } from "@/redux/slices/admin/productManagementApi";
+import {
+  useAddProductMutation,
+  useUpdateProductMutation,
+} from "@/redux/slices/admin/productManagementApi";
 import { useGetSubCategoriesQuery } from "@/redux/slices/admin/subCategoryApi";
 import { Button, Col, Form, Input, Row, Select, Upload } from "antd";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const { Option } = Select;
 const { TextArea } = Input;
+
 const AddProduct = () => {
-  const [imageUrl, setImageUrl] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<File | string | null>(null);
   const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
   const { data: offerData } = useGetOffersQuery<Record<string, any>>({});
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const productsDataString = searchParams.get("products");
+  const productsData = productsDataString
+    ? JSON.parse(decodeURIComponent(productsDataString))
+    : null;
+
+  // console.log(productsData);
   const { data: subCategoryData } = useGetSubCategoriesQuery<
     Record<string, any>
   >({});
-  const [addProduct, { isLoading, isSuccess, error, data }] =
-    useAddProductMutation();
+  const [addProduct, { isLoading }] = useAddProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
+
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Product add Successfully");
-      }
+    if (productsData) {
+      setImageUrl(
+        productsData.productImage
+          ? `${imageURL}/${productsData.productImage[0]}`
+          : null
+      );
+    } else {
+      setImageUrl(null);
     }
-
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData.data.message);
-      } else {
-        console.error("Login error:", error);
-      }
-    }
-  }, [data, error, isSuccess]);
-
+  }, [productsData]);
   const onFinish = async (values: any) => {
     try {
       const formData = new FormData();
@@ -43,7 +52,26 @@ const AddProduct = () => {
       Object.keys(values).forEach((key) => {
         formData.append(key, values[key]);
       });
-      await addProduct(formData);
+
+      if (productsData) {
+        const res = await updateProduct({ id: productsData?._id, formData });
+        if (res?.data?.success === true) {
+          alert("Product updated successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      } else {
+        const res = await addProduct(formData);
+        if (res?.data?.success === true) {
+          alert("Product create successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      }
     } catch (error: any) {
       console.log(error?.message);
     }
@@ -71,14 +99,11 @@ const AddProduct = () => {
     // console.log(info.file?.originFileObj);
     setImageUrl(info.file?.originFileObj);
   };
-  console.log(imageUrl);
   const initialFormValues = {
-    name: "Nadir on the go",
-    email: "nadir@gmail.com",
-    phoneNumber: "4651261025",
-    dateOfBirth: "25-4-2003",
-    location: "Banasree,Dahaka",
+    ...productsData,
+    offer: productsData ? productsData.offer?._id : undefined,
   };
+
   return (
     <div>
       <Title>Add Product</Title>
@@ -134,7 +159,7 @@ const AddProduct = () => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Quantity" name="quantity">
+                <Form.Item label="Quantity" name="store">
                   <Input size="large" placeholder="Enter quantity of product" />
                 </Form.Item>
               </Col>
@@ -205,13 +230,21 @@ const AddProduct = () => {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="Discount" name="discountPer">
-                  <Input size="large" placeholder="Discount Percentage" />
+                <Form.Item label="Discount" name="discount">
+                  <Input
+                    type="number"
+                    size="large"
+                    placeholder="Discount Percentage"
+                  />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Discount Price" name="discountPrice">
-                  <Input size="large" placeholder="Discount price" />
+                  <Input
+                    type="number"
+                    size="large"
+                    placeholder="Discount price"
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>

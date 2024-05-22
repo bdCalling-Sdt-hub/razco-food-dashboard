@@ -27,6 +27,14 @@ export const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.about],
     }),
+    createFaq: build.mutation({
+      query: (policyData) => ({
+        url: `faq/create-faq`,
+        method: "POST",
+        body: policyData,
+      }),
+      invalidatesTags: [tagTypes.faq],
+    }),
     getPrivacyPolicy: build.query({
       query: (arg: Record<string, any>) => {
         return {
@@ -84,6 +92,24 @@ export const settingApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.profile],
     }),
+    faqs: build.query({
+      query: () => {
+        return {
+          url: `faq`,
+          method: "GET",
+        };
+      },
+      providesTags: [tagTypes.faq],
+    }),
+    notifications: build.query({
+      query: () => {
+        return {
+          url: `notifications`,
+          method: "GET",
+        };
+      },
+      providesTags: [tagTypes.profile],
+    }),
     updateProfile: build.mutation({
       query: (data) => ({
         url: `user/profile-update`,
@@ -91,6 +117,30 @@ export const settingApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: [tagTypes.profile],
+    }),
+    updateTermsConditions: build.mutation({
+      query: ({ ...content }) => ({
+        url: `rules/terms-and-conditions`,
+        method: "PATCH",
+        body: content,
+      }),
+      invalidatesTags: [tagTypes.terms],
+    }),
+    updatePrivacyPolicy: build.mutation({
+      query: ({ ...content }) => ({
+        url: `rules/privacy-policy`,
+        method: "PATCH",
+        body: content,
+      }),
+      invalidatesTags: [tagTypes.policy],
+    }),
+    updateAboutUs: build.mutation({
+      query: ({ ...content }) => ({
+        url: `rules/about`,
+        method: "PATCH",
+        body: content,
+      }),
+      invalidatesTags: [tagTypes.about],
     }),
     changePassword: build.mutation({
       query: (userData) => ({
@@ -124,6 +174,22 @@ export const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.verify],
     }),
+    updateFaq: build.mutation({
+      query: ({ id, question, answer }) => ({
+        url: `faq/${id}`,
+        method: "PATCH",
+        body: { question, answer },
+      }),
+      invalidatesTags: [tagTypes.faq],
+    }),
+    deleteFaq: build.mutation({
+      query: (id) => ({
+        url: `faq/${id}`,
+        method: "DELETE",
+        body: id,
+      }),
+      invalidatesTags: [tagTypes.faq],
+    }),
   }),
 });
 
@@ -140,4 +206,12 @@ export const {
   useForgetPasswordMutation,
   useResetPasswordMutation,
   useVerifyEmailMutation,
+  useNotificationsQuery,
+  useUpdateAboutUsMutation,
+  useUpdatePrivacyPolicyMutation,
+  useUpdateTermsConditionsMutation,
+  useCreateFaqMutation,
+  useUpdateFaqMutation,
+  useDeleteFaqMutation,
+  useFaqsQuery,
 } = settingApi;

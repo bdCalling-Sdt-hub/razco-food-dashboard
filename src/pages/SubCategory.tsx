@@ -19,7 +19,7 @@ const SubCategory = () => {
   query["limit"] = size;
   query["page"] = page;
   const [open, setOpen] = useState(false);
-
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const { data: subCategoryData } = useGetSubCategoriesQuery<
     Record<string, any>
   >({ ...query });
@@ -47,7 +47,10 @@ const SubCategory = () => {
   const showModal = () => {
     setOpen(true);
   };
-
+  const showEditModal = (offer: any) => {
+    setSelectedOffer(offer);
+    setOpen(true);
+  };
   const columns = [
     {
       title: "S.NO",
@@ -71,7 +74,7 @@ const SubCategory = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button onClick={showModal} className="text-primary">
+          <button onClick={() => showEditModal(data)} className="text-primary">
             <Edit />
           </button>
           <button className="text-red-500">
@@ -115,7 +118,11 @@ const SubCategory = () => {
           showSizeChanger: true,
         }}
       />
-      <SubcategoryModel open={open} setOpen={setOpen} />
+      <SubcategoryModel
+        open={open}
+        setOpen={setOpen}
+        subCategory={selectedOffer}
+      />
     </div>
   );
 };

@@ -1,43 +1,50 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Form, Input, Modal, Select } from "antd";
 import { Image } from "lucide-react";
 import { useEffect, useState } from "react";
 import Button from "../share/Button";
 import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
-import { useCreateSubCategoryMutation } from "@/redux/slices/admin/subCategoryApi";
+import {
+  useCreateSubCategoryMutation,
+  useUpdateSubCategoryMutation,
+} from "@/redux/slices/admin/subCategoryApi";
+import { imageURL } from "@/redux/api/baseApi";
 
 interface OfferModelProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  subCategory: any;
 }
 
-const SubcategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
+const SubcategoryModel: React.FC<OfferModelProps> = ({
+  open,
+  setOpen,
+  subCategory,
+}) => {
   const [imageUrl, setImageUrl] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
   const [image, setImage] = useState(null);
   const [offer, setOffer] = useState("Foods");
-  const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
-  const formData = new FormData();
-  const newCategories = categoryData?.data?.data;
-  const [createSubCategory, { isLoading, data, error, isSuccess }] =
-    useCreateSubCategoryMutation();
-  useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Sub Category add Successfully");
-        setOpen(false);
-      }
-    }
 
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData?.data?.message);
-      } else {
-        console.error("Login error:", error);
-      }
+  const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
+  const newCategories = categoryData?.data?.data;
+  const [createSubCategory, { isLoading }] = useCreateSubCategoryMutation();
+  const [updateSubCategory] = useUpdateSubCategoryMutation();
+
+  useEffect(() => {
+    if (subCategory) {
+      setSubCategoryName(subCategory.subcategoryName);
+      setImageUrl(
+        subCategory.subcategoryImage
+          ? `${imageURL}/${subCategory.subcategoryImage}`
+          : ""
+      );
+    } else {
+      setSubCategoryName("");
+      setImageUrl("");
+      setImage(null);
     }
-  }, [data, error, isSuccess, setOpen]);
+  }, [subCategory]);
   const handleCancel = () => {
     setOpen(false);
   };
@@ -54,17 +61,42 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
     setOffer(value);
   };
   const handleSubCategory = async () => {
-    if (!image) {
-      alert("Please select an image");
+    if (!subCategoryName) {
+      alert("Please fill all fields");
       return;
     }
-    formData.append("subcategoryImage", image);
+
+    const formData = new FormData();
     formData.append("subcategoryName", subCategoryName);
-    formData.append("category", offer);
+    if (image) {
+      formData.append("subcategoryImage", image);
+    }
+
     try {
-      await createSubCategory(formData);
-    } catch (error: any) {
-      console.log(error?.message);
+      if (subCategory) {
+        const res = await updateSubCategory({ id: subCategory?._id, formData });
+
+        if (res?.data?.success === true) {
+          alert("subCategory updated successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      } else {
+        const res = await createSubCategory(formData);
+        if (res?.data?.success === true) {
+          alert("subCategory created successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      }
+      setOpen(false);
+    } catch (err: any) {
+      console.error(err.message);
+      alert(err.message);
     }
   };
 
@@ -72,13 +104,13 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
     <div>
       <Modal
         open={open}
-        title="Add Subcategory"
+        title={subCategory ? "Edit Sub Category" : "Add Subcategory"}
         onCancel={handleCancel}
         footer={false}
       >
         <h2 className="text-md mb-2">Select Category</h2>
         <Select
-          defaultValue={offer}
+          defaultValue={subCategory ? subCategory?.category : offer}
           style={{ height: "40px", width: "100%" }}
           onChange={handleOffer}
           options={newCategories?.map((offer: any) => ({
@@ -115,6 +147,7 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
               onChange={(e) => setSubCategoryName(e.target.value)}
               placeholder="Category name"
               style={{ height: "45px" }}
+              value={subCategoryName}
             />
           </Form.Item>
         </Form>

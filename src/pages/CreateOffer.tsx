@@ -5,11 +5,9 @@ import {
   useDeleteOfferMutation,
   useGetOffersQuery,
 } from "@/redux/slices/admin/offerApi";
-import { Select, Table } from "antd";
+import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-
-const offers = ["Eid", "Big seal"];
 
 const CreateOffer = () => {
   //! Query
@@ -20,6 +18,7 @@ const CreateOffer = () => {
   query["limit"] = size;
   query["page"] = page;
   const [open, setOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const { data: offerData } = useGetOffersQuery<Record<string, any>>({
     ...query,
   });
@@ -48,9 +47,10 @@ const CreateOffer = () => {
   const showModal = () => {
     setOpen(true);
   };
-
-  const [offer, setOffer] = useState("Eid");
-
+  const showEditModal = (offer: any) => {
+    setSelectedOffer(offer);
+    setOpen(true);
+  };
   const columns = [
     {
       title: "S.NO",
@@ -74,7 +74,7 @@ const CreateOffer = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button className="text-primary">
+          <button onClick={() => showEditModal(data)} className="text-primary">
             <Edit />
           </button>
           <button
@@ -95,9 +95,6 @@ const CreateOffer = () => {
     }
   };
 
-  const handleOffer = (value: any) => {
-    setOffer(value);
-  };
   const handleDelete = async (id: string) => {
     try {
       await deleteOffer(id);
@@ -109,15 +106,6 @@ const CreateOffer = () => {
     <div>
       <Title>Manage Offer</Title>
       <div className="flex justify-between items-center mb-10 mt-4">
-        <Select
-          defaultValue={offer}
-          style={{ width: 150, height: "45px" }}
-          onChange={handleOffer}
-          options={offers.map((offer) => ({
-            label: offer,
-            value: offer,
-          }))}
-        />
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Add Offer
         </Button>
@@ -133,7 +121,7 @@ const CreateOffer = () => {
           showSizeChanger: true,
         }}
       />
-      <OfferModel open={open} setOpen={setOpen} />
+      <OfferModel open={open} setOpen={setOpen} offer={selectedOffer} />
     </div>
   );
 };

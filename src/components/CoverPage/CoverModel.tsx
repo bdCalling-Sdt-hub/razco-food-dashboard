@@ -1,38 +1,37 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Form, Input, Modal } from "antd";
 import { Image } from "lucide-react";
 import { useEffect, useState } from "react";
 import Button from "../share/Button";
-import { useCreateCoverMutation } from "@/redux/slices/admin/coverApi";
+import {
+  useCreateCoverMutation,
+  useUpdateCoverMutation,
+} from "@/redux/slices/admin/coverApi";
+import { imageURL } from "@/redux/api/baseApi";
 
 interface OfferModelProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  cover: any;
 }
 
-const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
+const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen, cover }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [coverName, setCoverName] = useState("");
-  const [createCover, { isLoading, data, isSuccess, error }] =
-    useCreateCoverMutation();
+  const [createCover, { data, isSuccess, error }] = useCreateCoverMutation();
+  // console.log(cover.bannerImage);
+  const [updateCover] = useUpdateCoverMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Banner add Successfully");
-        setOpen(false);
-      }
+    if (cover) {
+      setCoverName(cover.bannerName);
+      setImageUrl(cover.bannerImage ? `${imageURL}/${cover.bannerImage}` : "");
+    } else {
+      setCoverName("");
+      setImageUrl("");
+      setImage(null);
     }
-
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData.data.message);
-      } else {
-        console.error("Login error:", error);
-      }
-    }
-  }, [data, error, isSuccess, setOpen]);
+  }, [cover, data, error, isSuccess, setOpen]);
   const formData = new FormData();
   if (image) {
     formData.append("bannerImage", image);
@@ -49,18 +48,60 @@ const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
     setImage(file);
   };
   const handleCoupon = async () => {
-    if (!image) {
-      alert("Please select an image");
+    // if (!image) {
+    //   alert("Please select an image");
+    //   return;
+    // }
+
+    // formData.append("bannerName", coverName);
+    // formData.append("bannerImage", image);
+
+    // try {
+    //   await createCover(formData);
+    // } catch (err: any) {
+    //   console.error(err.message);
+    // }
+    if (!coverName) {
+      alert("Please fill all fields");
       return;
     }
 
+    const formData = new FormData();
     formData.append("bannerName", coverName);
-    formData.append("bannerImage", image);
+
+    if (image) {
+      formData.append("bannerImage", image);
+    }
 
     try {
-      await createCover(formData);
+      if (cover) {
+        const res = await updateCover({ id: cover._id, formData });
+
+        if (res?.data?.success === true) {
+          alert("Cover updated successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      } else {
+        if (!image) {
+          alert("Please select an image");
+          return;
+        }
+        const res = await createCover(formData);
+        if (res?.data?.success === true) {
+          alert("Cover created successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      }
+      setOpen(false);
     } catch (err: any) {
       console.error(err.message);
+      alert(err.message);
     }
   };
   return (
@@ -72,11 +113,13 @@ const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
         footer={false}
       >
         {/* <Form onFinish={onFinish} layout="vertical"> */}
-        <Form.Item name={"bannerName"} label="Cover Name">
+        <Form.Item label="Cover Name">
           <Input
             onChange={(e) => setCoverName(e.target.value)}
             placeholder="Write cover name"
             size="large"
+            name={"bannerName"}
+            value={coverName}
           />
         </Form.Item>
         {/* </Form> */}

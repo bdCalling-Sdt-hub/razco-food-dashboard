@@ -19,6 +19,7 @@ const PromoCode = () => {
   query["page"] = page;
 
   const [open, setOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const showModal = () => {
     setOpen(true);
   };
@@ -44,7 +45,10 @@ const PromoCode = () => {
       }
     }
   }, [data, error, isSuccess, setOpen]);
-
+  const showEditModal = (offer: any) => {
+    setSelectedOffer(offer);
+    setOpen(true);
+  };
   const columns = [
     {
       title: "S.NO",
@@ -78,7 +82,7 @@ const PromoCode = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button onClick={showModal} className="text-primary">
+          <button onClick={() => showEditModal(data)} className="text-primary">
             <Edit />
           </button>
           <button
@@ -125,7 +129,7 @@ const PromoCode = () => {
           showSizeChanger: true,
         }}
       />
-      <PromoCodeModel open={open} setOpen={setOpen} />
+      <PromoCodeModel open={open} setOpen={setOpen} promoData={selectedOffer} />
     </div>
   );
 };

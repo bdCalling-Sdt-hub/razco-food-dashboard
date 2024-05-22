@@ -25,14 +25,22 @@ export const couponApi = baseApi.injectEndpoints({
           meta,
         };
       },
-      providesTags: [tagTypes.admin],
+      providesTags: [tagTypes.coupon],
+    }),
+    updateCoupon: build.mutation({
+      query: ({ id, data }) => ({
+        url: `/coupon/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.coupon],
     }),
     deleteCoupon: build.mutation({
       query: (id) => ({
         url: `coupon/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.admin],
+      invalidatesTags: [tagTypes.coupon],
     }),
   }),
 });
@@ -41,4 +49,5 @@ export const {
   useCreateCouponMutation,
   useGetCouponsQuery,
   useDeleteCouponMutation,
+  useUpdateCouponMutation,
 } = couponApi;

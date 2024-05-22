@@ -28,6 +28,14 @@ export const productManagementApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.product],
     }),
+    updateProduct: build.mutation({
+      query: ({ id, formData }) => ({
+        url: `/product/${id}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: [tagTypes.product],
+    }),
     deleteProduct: build.mutation({
       query: (id) => ({
         url: `product/${id}`,
@@ -42,4 +50,5 @@ export const {
   useAddProductMutation,
   useGetProductsQuery,
   useDeleteProductMutation,
+  useUpdateProductMutation,
 } = productManagementApi;

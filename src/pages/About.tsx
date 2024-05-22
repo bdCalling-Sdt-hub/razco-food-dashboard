@@ -1,6 +1,10 @@
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
-import { useCreateAboutUsMutation } from "@/redux/slices/admin/settingApi";
+import {
+  useCreateAboutUsMutation,
+  useGetAboutUsQuery,
+  useUpdateAboutUsMutation,
+} from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -9,6 +13,8 @@ const About = () => {
   const [content, setContent] = useState("");
   const [createAboutUs, { isLoading, data, isSuccess, error }] =
     useCreateAboutUsMutation();
+  const { data: aboutData } = useGetAboutUsQuery<Record<string, any>>({});
+  const [updateAboutUs] = useUpdateAboutUsMutation();
   useEffect(() => {
     if (isSuccess) {
       if (data) {
@@ -28,7 +34,18 @@ const About = () => {
   }, [data, error, isSuccess]);
   const handleCreate = async () => {
     try {
-      await createAboutUs({ content });
+      if (aboutData?.data?.data?.content) {
+        const res = await updateAboutUs({ content });
+
+        if (res?.data?.success) {
+          alert("Update successful");
+        }
+      } else {
+        const res = await createAboutUs({ content });
+        if (res?.data?.success) {
+          alert("Create successful");
+        }
+      }
     } catch (err: any) {
       console.error(err.message);
     }
@@ -38,7 +55,7 @@ const About = () => {
       <Title className="mb-4">About</Title>
       <JoditEditor
         ref={editor}
-        value={content}
+        value={aboutData?.data?.data?.content}
         config={{ height: 600 }}
         onBlur={(newContent) => setContent(newContent)}
       />

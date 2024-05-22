@@ -19,6 +19,7 @@ const Category = () => {
   query["page"] = page;
 
   const [open, setOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
 
   const [deleteCategory, { isSuccess, error, data }] =
@@ -44,7 +45,10 @@ const Category = () => {
   const showModal = () => {
     setOpen(true);
   };
-
+  const showEditModal = (offer: any) => {
+    setSelectedOffer(offer);
+    setOpen(true);
+  };
   const columns = [
     {
       title: "S.NO",
@@ -73,7 +77,7 @@ const Category = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button onClick={showModal} className="text-primary">
+          <button onClick={() => showEditModal(data)} className="text-primary">
             <Edit />
           </button>
           <button
@@ -120,7 +124,7 @@ const Category = () => {
           showSizeChanger: true,
         }}
       />
-      <CategoryModel open={open} setOpen={setOpen} />
+      <CategoryModel open={open} setOpen={setOpen} category={selectedOffer} />
     </div>
   );
 };

@@ -9,7 +9,7 @@ export const subCategoryApi = baseApi.injectEndpoints({
         method: "POST",
         body: categoryData,
       }),
-      invalidatesTags: [tagTypes.category],
+      invalidatesTags: [tagTypes.subCategory],
     }),
     getSubCategories: build.query({
       query: (arg: Record<string, any>) => {
@@ -25,14 +25,22 @@ export const subCategoryApi = baseApi.injectEndpoints({
           meta,
         };
       },
-      providesTags: [tagTypes.category],
+      providesTags: [tagTypes.subCategory],
+    }),
+    updateSubCategory: build.mutation({
+      query: ({ id, formData }) => ({
+        url: `/subcategory/${id}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: [tagTypes.subCategory],
     }),
     deleteSubCategory: build.mutation({
       query: (id) => ({
         url: `subcategory/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.category],
+      invalidatesTags: [tagTypes.subCategory],
     }),
   }),
 });
@@ -41,4 +49,5 @@ export const {
   useCreateSubCategoryMutation,
   useGetSubCategoriesQuery,
   useDeleteSubCategoryMutation,
+  useUpdateSubCategoryMutation,
 } = subCategoryApi;

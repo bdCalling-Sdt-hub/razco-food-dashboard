@@ -27,6 +27,14 @@ export const coverApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.cover],
     }),
+    updateCover: build.mutation({
+      query: ({ id, formData }) => ({
+        url: `/banner/${id}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: [tagTypes.cover],
+    }),
     deleteCover: build.mutation({
       query: (id) => ({
         url: `banner/${id}`,
@@ -41,4 +49,5 @@ export const {
   useCreateCoverMutation,
   useGetCoversQuery,
   useDeleteCoverMutation,
+  useUpdateCoverMutation,
 } = coverApi;

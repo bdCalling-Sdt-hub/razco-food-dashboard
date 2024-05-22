@@ -108,7 +108,7 @@ const ProductManagement = () => {
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2">
           <button className="text-primary">
-            <Link to="/add-product">
+            <Link to={`/add-product?products=${JSON.stringify(data)}`}>
               <Edit />
             </Link>
           </button>

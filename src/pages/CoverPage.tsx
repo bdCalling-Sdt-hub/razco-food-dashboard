@@ -20,6 +20,7 @@ const CoverPage = () => {
   query["limit"] = size;
   query["page"] = page;
   const [open, setOpen] = useState(false);
+  const [selectedCover, setSelectedCover] = useState(null);
   const { data: coverData } = useGetCoversQuery<Record<string, any>>({
     ...query,
   });
@@ -31,13 +32,15 @@ const CoverPage = () => {
       <img
         style={{
           width: 150,
+          height: 100,
+          borderRadius: 10,
         }}
         src={`${imageURL}/${item?.bannerImage}`}
         alt={item?.bannerName}
       />
     ),
     validityDate: 5,
-    action: "",
+    action: item,
   }));
 
   const [deleteCover, { isSuccess, error, data }] = useDeleteCoverMutation();
@@ -91,11 +94,14 @@ const CoverPage = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button onClick={showModal} className="text-primary">
+          <button
+            onClick={() => showEditModal(data.action)}
+            className="text-primary"
+          >
             <Edit />
           </button>
           <button
-            onClick={() => handleDelete(data?._id)}
+            onClick={() => handleDelete(data?.action?._id)}
             className="text-red-500"
           >
             <Trash2 />
@@ -111,7 +117,10 @@ const CoverPage = () => {
       setSize(pageSize);
     }
   };
-
+  const showEditModal = (offer: any) => {
+    setSelectedCover(offer);
+    setOpen(true);
+  };
   const handleDelete = async (id: string) => {
     try {
       await deleteCover(id);
@@ -139,7 +148,7 @@ const CoverPage = () => {
           showSizeChanger: true,
         }}
       />
-      <CoverModel open={open} setOpen={setOpen} />
+      <CoverModel open={open} setOpen={setOpen} cover={selectedCover} />
     </div>
   );
 };

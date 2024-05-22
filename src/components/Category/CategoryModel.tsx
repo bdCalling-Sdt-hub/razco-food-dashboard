@@ -1,42 +1,45 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Form, Input, Modal } from "antd";
 import { Image } from "lucide-react";
 import { useEffect, useState } from "react";
 import Button from "../share/Button";
-import { useCreateCategoryMutation } from "@/redux/slices/admin/categoryApi";
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+} from "@/redux/slices/admin/categoryApi";
+import { imageURL } from "@/redux/api/baseApi";
 
 interface OfferModelProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  category: any;
 }
 
-const CategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
+const CategoryModel: React.FC<OfferModelProps> = ({
+  open,
+  setOpen,
+  category,
+}) => {
   const [imageUrl, setImageUrl] = useState("");
   const [image, setImage] = useState(null);
   const [categoryName, setCategoryName] = useState("");
-  const [createCategory, { isLoading, data, isSuccess, error }] =
+  const [createCategory, { data, isSuccess, error }] =
     useCreateCategoryMutation();
-  useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Category add Successfully");
-        setOpen(false);
-      }
-    }
+  const [updateCategory] = useUpdateCategoryMutation();
 
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData.data.message);
-      } else {
-        console.error("Login error:", error);
-      }
+  useEffect(() => {
+    if (category) {
+      setCategoryName(category.categoryName);
+      setImageUrl(
+        category.categoryImage ? `${imageURL}/${category.categoryImage}` : ""
+      );
+    } else {
+      setCategoryName("");
+      setImageUrl("");
+      setImage(null);
     }
-  }, [data, error, isSuccess, setOpen]);
-  const formData = new FormData();
-  if (image) {
-    formData.append("bannerImage", image);
-  }
+  }, [category, data, error, isSuccess, setOpen]);
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -50,25 +53,49 @@ const CategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
     setImage(file);
   };
   const handleCategory = async () => {
-    if (!image) {
-      alert("Please select an image");
+    if (!categoryName) {
+      alert("Please fill all fields");
       return;
     }
 
+    const formData = new FormData();
     formData.append("categoryName", categoryName);
-    formData.append("categoryImage", image);
+    if (image) {
+      formData.append("categoryImage", image);
+    }
 
     try {
-      await createCategory(formData);
+      if (category) {
+        const res = await updateCategory({ id: category?._id, formData });
+
+        if (res?.data?.success === true) {
+          alert("Category updated successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      } else {
+        const res = await createCategory(formData);
+        if (res?.data?.success === true) {
+          alert("Category created successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      }
+      setOpen(false);
     } catch (err: any) {
       console.error(err.message);
+      alert(err.message);
     }
   };
   return (
     <div>
       <Modal
         open={open}
-        title="Add Category"
+        title={category ? "Edit Category" : "Add Category"}
         onCancel={handleCancel}
         footer={false}
       >
@@ -101,6 +128,7 @@ const CategoryModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
               onChange={(e) => setCategoryName(e.target.value)}
               placeholder="Category name"
               size="large"
+              value={categoryName}
             />
           </Form.Item>
         </Form>

@@ -1,43 +1,47 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Form, Input, Modal } from "antd";
 import { Image } from "lucide-react";
 import { useEffect, useState } from "react";
 import Button from "../share/Button";
-import { useCreateOfferMutation } from "@/redux/slices/admin/offerApi";
+import {
+  useCreateOfferMutation,
+  useUpdateOfferMutation,
+} from "@/redux/slices/admin/offerApi";
+import { imageURL } from "@/redux/api/baseApi";
+interface ErrorResponse {
+  error?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
 
 interface OfferModelProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  offer: any;
 }
 
-const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
+const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen, offer }) => {
   const [imageUrl, setImageUrl] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [offerName, setOfferName] = useState("");
   const [percentage, setPercentage] = useState("");
-  const [createOffer, { isLoading, data, isSuccess, error }] =
-    useCreateOfferMutation();
-  useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Offer add Successfully");
-        setOpen(false);
-      }
-    }
+  const [createOffer, { data, isSuccess, error }] = useCreateOfferMutation();
+  const [updateOffer] = useUpdateOfferMutation();
 
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData.data.message);
-      } else {
-        console.error("Login error:", error);
-      }
+  useEffect(() => {
+    if (offer) {
+      setOfferName(offer.offerName);
+      setPercentage(offer.percentage);
+      setImageUrl(offer.offerImage ? `${imageURL}/${offer.offerImage}` : "");
+    } else {
+      setOfferName("");
+      setPercentage("");
+      setImageUrl("");
+      setImage(null);
     }
-  }, [data, error, isSuccess, setOpen]);
-  const formData = new FormData();
-  if (image) {
-    formData.append("bannerImage", image);
-  }
+  }, [data, error, isSuccess, offer, setOpen]);
   const handleCancel = () => {
     setOpen(false);
   };
@@ -48,42 +52,70 @@ const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
     setImageUrl(url);
     setImage(file);
   };
+
   const handleOffer = async () => {
-    if (!image) {
-      alert("Please select an image");
+    if (!offerName || !percentage) {
+      alert("Please fill all fields");
       return;
     }
 
+    const formData = new FormData();
     formData.append("offerName", offerName);
     formData.append("percentage", percentage);
-    formData.append("offerImage", image);
+    if (image) {
+      formData.append("offerImage", image);
+    }
 
     try {
-      await createOffer(formData);
+      if (offer) {
+        const res = await updateOffer({ id: offer._id, formData });
+
+        if (res?.data?.success === true) {
+          alert("Offer updated successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      } else {
+        const res = await createOffer(formData);
+        if (res?.data?.success === true) {
+          alert("Offer created successfully");
+        }
+        if (res?.error) {
+          //@ts-ignore
+          alert(res?.error?.data?.message);
+        }
+      }
+      setOpen(false);
     } catch (err: any) {
       console.error(err.message);
+      alert(err.message);
     }
   };
   return (
     <div>
       <Modal
         open={open}
-        title="Add Offer"
+        title={offer ? "Edit Offer" : "Add Offer"}
         onCancel={handleCancel}
         footer={false}
       >
         <Form.Item label="Offers Name">
           <Input
+            value={offerName}
             onChange={(e) => setOfferName(e.target.value)}
             placeholder="Offer name"
             size="large"
           />
         </Form.Item>
-        <Form.Item name={"percentage"} label="Percentage">
+        <Form.Item label="Percentage">
           <Input
+            value={percentage}
             onChange={(e) => setPercentage(e.target.value)}
             placeholder="Offer Percentage"
             size="large"
+            type="number"
           />
         </Form.Item>
 

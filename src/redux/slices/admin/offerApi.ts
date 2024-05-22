@@ -27,6 +27,14 @@ export const offerApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.offer],
     }),
+    updateOffer: build.mutation({
+      query: ({ id, formData }) => ({
+        url: `/offer/${id}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: [tagTypes.offer],
+    }),
     deleteOffer: build.mutation({
       query: (id) => ({
         url: `offer/${id}`,
@@ -41,4 +49,5 @@ export const {
   useCreateOfferMutation,
   useGetOffersQuery,
   useDeleteOfferMutation,
+  useUpdateOfferMutation,
 } = offerApi;

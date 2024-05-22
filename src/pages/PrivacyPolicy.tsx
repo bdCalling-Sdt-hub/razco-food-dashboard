@@ -1,34 +1,34 @@
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
-import { useCreatePrivacyPolicyMutation } from "@/redux/slices/admin/settingApi";
+import {
+  useCreatePrivacyPolicyMutation,
+  useGetPrivacyPolicyQuery,
+  useUpdatePrivacyPolicyMutation,
+} from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const PrivacyPolicy = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
-  const [createPrivacy, { isLoading, data, isSuccess, error }] =
-    useCreatePrivacyPolicyMutation();
-  useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Policy add Successfully");
-      }
-    }
+  const [createPrivacy, { isLoading }] = useCreatePrivacyPolicyMutation();
+  const [updatePrivacy] = useUpdatePrivacyPolicyMutation();
+  const { data: termsData } = useGetPrivacyPolicyQuery<Record<string, any>>({});
 
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData.data.message);
-      } else {
-        console.error("Login error:", error);
-      }
-    }
-  }, [data, error, isSuccess]);
   const handlePrivacy = async () => {
     try {
-      await createPrivacy({ content });
+      if (termsData?.data?.data?.content) {
+        const res = await updatePrivacy({ content });
+        // console.log(res);
+        if (res?.data?.success) {
+          alert("Update successful");
+        }
+      } else {
+        const res = await createPrivacy({ content });
+        if (res?.data?.success) {
+          alert("Create successful");
+        }
+      }
     } catch (err: any) {
       console.error(err.message);
     }
@@ -38,7 +38,7 @@ const PrivacyPolicy = () => {
       <Title className="mb-4">Privacy Policy</Title>
       <JoditEditor
         ref={editor}
-        value={content}
+        value={termsData?.data?.data?.content}
         config={{ height: 600 }}
         onBlur={(newContent) => setContent(newContent)}
       />

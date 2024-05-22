@@ -18,8 +18,9 @@ import {
 } from "lucide-react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { removeUserInfo } from "@/redux/services/auth.service";
+import { isLoggedIn, removeUserInfo } from "@/redux/services/auth.service";
 import { authKey } from "@/constants/storageKey";
+import { useNotificationsQuery } from "@/redux/slices/admin/settingApi";
 const { Header, Sider, Content } = Layout;
 
 const menuItems = [
@@ -140,7 +141,12 @@ const { SubMenu } = Menu;
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const isUser = isLoggedIn();
+  const { data: notifications } = useNotificationsQuery({});
 
+  if (!isUser) {
+    navigate("/auth/login");
+  }
   const handleLogout = () => {
     removeUserInfo(authKey);
     navigate("/auth/login");
@@ -223,7 +229,7 @@ const Dashboard = () => {
           }}
         >
           <div className="flex items-center gap-5">
-            <Badge count={5}>
+            <Badge count={notifications?.data?.length}>
               <Bell size={30} color="#fff" />
             </Badge>
             <Popover placement="bottom" title="Hello" content={content}>
