@@ -20,7 +20,11 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { isLoggedIn, removeUserInfo } from "@/redux/services/auth.service";
 import { authKey } from "@/constants/storageKey";
-import { useNotificationsQuery } from "@/redux/slices/admin/settingApi";
+import {
+  useMyProfileQuery,
+  useNotificationsQuery,
+} from "@/redux/slices/admin/settingApi";
+import { imageURL } from "@/redux/api/baseApi";
 const { Header, Sider, Content } = Layout;
 
 const menuItems = [
@@ -143,6 +147,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const isUser = isLoggedIn();
   const { data: notifications } = useNotificationsQuery({});
+  const { data: userData } = useMyProfileQuery({});
+
+  const myProfile = userData?.data;
 
   if (!isUser) {
     navigate("/auth/login");
@@ -240,9 +247,10 @@ const Dashboard = () => {
                     height: "40px",
                     backgroundColor: "#87d068",
                   }}
-                  icon={<User size={25} />}
+                  src={`${imageURL}/${myProfile?.profileImage}`}
+                  // icon={<User size={25} />}
                 />
-                <h2 className="text-lg text-white">Mr.admin</h2>
+                <h2 className="text-lg text-white">{myProfile?.name}</h2>
               </div>
             </Popover>
           </div>

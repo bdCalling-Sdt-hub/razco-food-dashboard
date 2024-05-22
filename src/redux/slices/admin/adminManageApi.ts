@@ -35,6 +35,13 @@ export const userApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.admin],
     }),
+    myProfile: build.query({
+      query: () => ({
+        url: "user/profile",
+        method: "GET",
+      }),
+      providesTags: [tagTypes.admin],
+    }),
     deleteAdmin: build.mutation({
       query: (id) => ({
         url: `user/delete-admin/${id}`,
@@ -50,4 +57,5 @@ export const {
   useMakeAdminMutation,
   useGetAllAdminsQuery,
   useDeleteAdminMutation,
+  useMyProfileQuery,
 } = userApi;
