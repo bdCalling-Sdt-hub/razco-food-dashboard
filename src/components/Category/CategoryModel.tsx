@@ -8,6 +8,7 @@ import {
   useUpdateCategoryMutation,
 } from "@/redux/slices/admin/categoryApi";
 import { imageURL } from "@/redux/api/baseApi";
+import toast from "react-hot-toast";
 
 interface OfferModelProps {
   open: boolean;
@@ -54,7 +55,7 @@ const CategoryModel: React.FC<OfferModelProps> = ({
   };
   const handleCategory = async () => {
     if (!categoryName) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -69,26 +70,26 @@ const CategoryModel: React.FC<OfferModelProps> = ({
         const res = await updateCategory({ id: category?._id, formData });
 
         if (res?.data?.success === true) {
-          alert("Category updated successfully");
+          toast.success("Category updated successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       } else {
         const res = await createCategory(formData);
         if (res?.data?.success === true) {
-          alert("Category created successfully");
+          toast.success("Category created successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       }
       setOpen(false);
     } catch (err: any) {
       console.error(err.message);
-      alert(err.message);
+      toast.error(err.message);
     }
   };
   return (

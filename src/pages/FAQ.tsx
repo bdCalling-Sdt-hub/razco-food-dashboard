@@ -7,6 +7,7 @@ import {
 } from "@/redux/slices/admin/settingApi";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 const FAQPage = () => {
   const [open, setOpen] = useState(false);
@@ -16,17 +17,34 @@ const FAQPage = () => {
   const showModal = () => {
     setOpen(true);
   };
-  const handleDelete = async (id: string) => {
-    try {
-      const res = await deleteFaq(id);
 
-      if (res?.data?.success) {
-        alert("FAQ Deleted");
+  const handleDelete = async (id: string) => {
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteFaq(id);
+
+        Swal.fire("Deleted!", "The feedback has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire(
+          "Error!",
+          "There was an error deleting the feedback.",
+          "error"
+        );
       }
-    } catch (err: any) {
-      alert(err?.message);
     }
   };
+
   const showEditModal = (offer: any) => {
     setFaqdata(offer);
     setOpen(true);

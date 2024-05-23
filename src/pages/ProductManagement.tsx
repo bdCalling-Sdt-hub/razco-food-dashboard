@@ -9,7 +9,9 @@ import {
 import { Input, Select, Table } from "antd";
 import { Edit, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ProductManagement = () => {
   //! Query
@@ -43,17 +45,11 @@ const ProductManagement = () => {
 
   const [deleteProduct, { isSuccess, error }] = useDeleteProductMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Admin Delete Successfully");
-      }
-    }
-
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -120,10 +116,28 @@ const ProductManagement = () => {
     },
   ];
   const handleDelete = async (id: string) => {
-    try {
-      await deleteProduct(id);
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteProduct(id);
+        Swal.fire("Deleted!", "Your product has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire(
+          "Error!",
+          "There was an error deleting your product.",
+          "error"
+        );
+      }
     }
   };
   const handlePageChange = (page: number, pageSize?: number) => {

@@ -5,10 +5,11 @@ import {
   useDeleteSubCategoryMutation,
   useGetSubCategoriesQuery,
 } from "@/redux/slices/admin/subCategoryApi";
-
+import Swal from "sweetalert2";
 import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const SubCategory = () => {
   //! Query
@@ -27,18 +28,11 @@ const SubCategory = () => {
   const [deleteSubCategory, { isSuccess, error }] =
     useDeleteSubCategoryMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Sub Category Delete Successfully");
-        setOpen(false);
-      }
-    }
-
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -93,12 +87,31 @@ const SubCategory = () => {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteSubCategory(id);
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteSubCategory(id);
+        Swal.fire("Deleted!", "The subcategory has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire(
+          "Error!",
+          "There was an error deleting the subcategory.",
+          "error"
+        );
+      }
     }
   };
+
   return (
     <div>
       <Title>Sub Category Management</Title>

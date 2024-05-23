@@ -7,58 +7,14 @@ import {
   YAxis,
 } from "recharts";
 import Title from "../share/Title";
+import { useDashboardOverviewQuery } from "@/redux/slices/admin/settingApi";
 
-const data = [
-  {
-    name: "Jan",
-    amt: 1700,
-  },
-  {
-    name: "Fab",
-    amt: 1510,
-  },
-  {
-    name: "Mar",
-    amt: 1990,
-  },
-  {
-    name: "Apr",
-    amt: 1600,
-  },
-  {
-    name: "May",
-    amt: 2281,
-  },
-  {
-    name: "Jun",
-    amt: 1500,
-  },
-  {
-    name: "July",
-    amt: 1800,
-  },
-  {
-    name: "Aug",
-    amt: 1300,
-  },
-  {
-    name: "Sep",
-    amt: 1500,
-  },
-  {
-    name: "Oct",
-    amt: 2000,
-  },
-  {
-    name: "Nov",
-    amt: 900,
-  },
-  {
-    name: "Dec",
-    amt: 2100,
-  },
-];
 const SealOverviewChart = () => {
+  const { data: dashboardData } = useDashboardOverviewQuery<
+    Record<string, any>
+  >({});
+  const data = dashboardData?.data?.yearlySalesOverview;
+  console.log(data);
   return (
     <div className="bg-base rounded p-4">
       <Title className="font-bold mb-5">Sales Overview</Title>
@@ -67,7 +23,12 @@ const SealOverviewChart = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Area type="monotone" dataKey="amt" stroke="#7CC84E" fill="#7CC84E" />
+          <Area
+            type="monotone"
+            dataKey="totalSale"
+            stroke="#7CC84E"
+            fill="#7CC84E"
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>

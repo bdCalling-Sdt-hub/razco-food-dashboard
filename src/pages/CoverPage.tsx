@@ -10,6 +10,8 @@ import {
   useGetCoversQuery,
 } from "@/redux/slices/admin/coverApi";
 import { imageURL } from "@/redux/api/baseApi";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const CoverPage = () => {
   //! Query
@@ -45,20 +47,13 @@ const CoverPage = () => {
 
   const [deleteCover, { isSuccess, error, data }] = useDeleteCoverMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Banner Delete Successfully");
-        setOpen(false);
-      }
-    }
-
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
-        console.error("Login error:", error);
+        toast.error(`Login error:${error}`);
       }
     }
   }, [data, error, isSuccess, setOpen]);
@@ -122,10 +117,28 @@ const CoverPage = () => {
     setOpen(true);
   };
   const handleDelete = async (id: string) => {
-    try {
-      await deleteCover(id);
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteCover(id);
+        Swal.fire("Deleted!", "The feedback has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire(
+          "Error!",
+          "There was an error deleting the feedback.",
+          "error"
+        );
+      }
     }
   };
 

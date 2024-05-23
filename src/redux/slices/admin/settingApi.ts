@@ -190,6 +190,15 @@ export const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.faq],
     }),
+    dashboardOverview: build.query({
+      query: () => {
+        return {
+          url: `order/sales-overview`,
+          method: "GET",
+        };
+      },
+      providesTags: [tagTypes.dashboard],
+    }),
   }),
 });
 
@@ -214,4 +223,5 @@ export const {
   useUpdateFaqMutation,
   useDeleteFaqMutation,
   useFaqsQuery,
+  useDashboardOverviewQuery,
 } = settingApi;

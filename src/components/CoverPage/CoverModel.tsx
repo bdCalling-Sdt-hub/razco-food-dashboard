@@ -8,6 +8,7 @@ import {
   useUpdateCoverMutation,
 } from "@/redux/slices/admin/coverApi";
 import { imageURL } from "@/redux/api/baseApi";
+import toast from "react-hot-toast";
 
 interface OfferModelProps {
   open: boolean;
@@ -78,30 +79,29 @@ const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen, cover }) => {
         const res = await updateCover({ id: cover._id, formData });
 
         if (res?.data?.success === true) {
-          alert("Cover updated successfully");
+          toast.success("Cover updated successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       } else {
         if (!image) {
-          alert("Please select an image");
+          toast.error("Please select an image");
           return;
         }
         const res = await createCover(formData);
         if (res?.data?.success === true) {
-          alert("Cover created successfully");
+          toast.success("Cover created successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       }
       setOpen(false);
     } catch (err: any) {
-      console.error(err.message);
-      alert(err.message);
+      toast.error(err.message);
     }
   };
   return (

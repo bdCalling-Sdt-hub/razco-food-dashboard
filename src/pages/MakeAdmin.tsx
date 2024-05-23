@@ -9,6 +9,8 @@ import {
 import { Table } from "antd";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const MakeAdmin = () => {
   //! Query
@@ -28,18 +30,11 @@ const MakeAdmin = () => {
   };
   const [deleteAdmin, { isSuccess, error, data }] = useDeleteAdminMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Admin Delete Successfully");
-        setOpen(false);
-      }
-    }
-
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -92,17 +87,35 @@ const MakeAdmin = () => {
     }
   };
   const handleDelete = async (id: string) => {
-    try {
-      await deleteAdmin(id);
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteAdmin(id);
+        Swal.fire("Deleted!", "The feedback has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire(
+          "Error!",
+          "There was an error deleting the feedback.",
+          "error"
+        );
+      }
     }
   };
 
   return (
     <div>
-      <Title>Make Admin</Title>
-      <div className="flex justify-end items-center mb-10 mt-4">
+      <div className="flex justify-between items-center mb-6 mt-4">
+        <Title>Make Admin</Title>
         <Button onClick={showModal} icon={<Plus size={18} />}>
           Add Admin
         </Button>

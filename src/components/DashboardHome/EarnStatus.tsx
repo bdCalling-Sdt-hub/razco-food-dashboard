@@ -1,36 +1,45 @@
+import { useDashboardOverviewQuery } from "@/redux/slices/admin/settingApi";
 import { Banknote, Box, Layers, ListTodo } from "lucide-react";
 
 const EarnStatus = () => {
+  const { data: dashboardData, isLoading } = useDashboardOverviewQuery({});
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  const data = dashboardData?.data?.salesOverview as any;
+
   const earnStatus = [
     {
       title: "Total sales",
-      count: 566,
+      count: data?.totalSales,
       icon: <Layers size={30} />,
       color: "#00BAC6",
       bgColor: "#D2F6FF",
     },
     {
       title: "Total Income",
-      count: 258,
+      count: data?.totalIncome,
       icon: <Banknote size={30} />,
       color: "#5664fd",
       bgColor: "#DDE0FF",
     },
     {
       title: "Complete Order",
-      count: 865,
+      count: data?.totalCompleteOrders,
       icon: <Box size={30} />,
       color: "#FEC53D",
       bgColor: "#f5ead0",
     },
     {
       title: "Pending Order",
-      count: 625,
+      count: data?.totalPendingOrders,
       icon: <ListTodo size={30} />,
       color: "#FFA800",
       bgColor: "#FFE3C7",
     },
   ];
+
   return (
     <div className="grid grid-cols-4 gap-2">
       {earnStatus.map((data, index) => (

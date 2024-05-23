@@ -6,6 +6,7 @@ import {
 import { Input, Select, Table } from "antd";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const statusTypes = ["active", "deactive"];
 
@@ -14,10 +15,13 @@ const UserManagement = () => {
   const query: Record<string, any> = {};
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
+  const [search, setSearch] = useState("");
   // set query for filter and search
   query["limit"] = size;
   query["page"] = page;
-
+  if (search) {
+    query["search"] = search;
+  }
   const { data: usersData } = useGetUsersQuery<Record<string, any>>({
     ...query,
   });
@@ -34,53 +38,53 @@ const UserManagement = () => {
       }
     }
   }, [error, isSuccess]);
+
   const handleOnchange = async (e: string, id: string) => {
-    try {
-      const res = await updateUserStatus({ status: e, _id: id });
-      if (res?.data?.success === true) {
-        alert("Status Updated");
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update the status?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, update it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        const res = await updateUserStatus({ status: e, _id: id });
+        if (res?.data?.success === true) {
+          Swal.fire("Updated!", "The status has been updated.", "success");
+        }
+      } catch (error: any) {
+        console.error(error?.message);
+        Swal.fire("Error!", "There was an error updating the status.", "error");
       }
-    } catch (error: any) {
-      console.log(error?.message);
     }
   };
 
   const columns = [
     {
-      title: "Product ID",
-      dataIndex: "productId",
-      key: "productId",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: "Product Name",
-      dataIndex: "productsName",
-      key: "productsName",
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
-      title: "Barcode",
-      dataIndex: "barcode",
-      key: "barcode",
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-    {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "stock",
-    },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -117,6 +121,7 @@ const UserManagement = () => {
     <div>
       <Title>User Management</Title>
       <Input
+        onChange={(e) => setSearch(e.target.value)}
         prefix={<Search />}
         className="w-1/4 h-11 my-5"
         placeholder="Search"

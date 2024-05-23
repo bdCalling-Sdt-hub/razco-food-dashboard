@@ -7,6 +7,7 @@ import {
   useCreateFaqMutation,
   useUpdateFaqMutation,
 } from "@/redux/slices/admin/settingApi";
+import toast from "react-hot-toast";
 
 interface OfferModelProps {
   open: boolean;
@@ -40,18 +41,18 @@ const FaqModal: React.FC<OfferModelProps> = ({ open, setOpen, faqData }) => {
       if (faqData) {
         const res = await updateFaq({ id: faqData?._id, question, answer });
         if (res?.data?.success) {
-          alert("FAQ Updated");
+          toast.success("FAQ Updated");
           setOpen(false);
         }
       } else {
         const res = await createFaq(data);
         if (res?.data?.success) {
-          alert("FAQ Created");
+          toast.success("FAQ Created");
           setOpen(false);
         }
       }
     } catch (error: any) {
-      console.log(error?.message);
+      toast.error(error?.message);
     }
   };
 

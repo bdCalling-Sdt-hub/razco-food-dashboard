@@ -136,12 +136,6 @@ const menuItems = [
   },
 ];
 
-const content = (
-  <div>
-    <p>Content</p>
-    <p>Content</p>
-  </div>
-);
 const { SubMenu } = Menu;
 
 const Dashboard = () => {
@@ -179,6 +173,7 @@ const Dashboard = () => {
     removeUserInfo(authKey);
     navigate("/auth/login");
   };
+
   return (
     <Layout>
       <Sider
@@ -192,7 +187,10 @@ const Dashboard = () => {
         }}
         trigger={null}
       >
-        <img src={logo} alt="" className="mx-auto mb-8 mt-5" />
+        <Link to={"/"}>
+          {" "}
+          <img src={logo} alt="" className="mx-auto mb-8 mt-5" />
+        </Link>
         <Menu
           mode="inline"
           style={{ background: "#5B52A3", color: "white" }}
@@ -257,11 +255,15 @@ const Dashboard = () => {
           }}
         >
           <div className="flex items-center gap-5">
+            {" "}
             <Badge count={notifications?.data?.length}>
-              <Bell size={30} color="#fff" />
+              <Link to={"/notifications"}>
+                <Bell size={30} color="#fff" />
+              </Link>
             </Badge>
-            <Popover placement="bottom" title="Hello" content={content}>
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Link to={"/settings/profile"}>
+                {" "}
                 <Avatar
                   style={{
                     width: "40px",
@@ -269,11 +271,12 @@ const Dashboard = () => {
                     backgroundColor: "#87d068",
                   }}
                   src={`${imageURL}/${myProfile?.profileImage}`}
-                  // icon={<User size={25} />}
                 />
+              </Link>
+              <Link to={"/settings/profile"}>
                 <h2 className="text-lg text-white">{myProfile?.name}</h2>
-              </div>
-            </Popover>
+              </Link>
+            </div>
           </div>
         </Header>
         <Content

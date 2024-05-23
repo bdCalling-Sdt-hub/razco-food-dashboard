@@ -12,6 +12,7 @@ import Feedback from "@/pages/Feedback";
 import ForgetPassword from "@/pages/ForgetPassword";
 import Login from "@/pages/Login";
 import MakeAdmin from "@/pages/MakeAdmin";
+import NotificationList from "@/pages/Notification";
 import OrderManagement from "@/pages/OrderManagement";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import ProductManagement from "@/pages/ProductManagement";
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/product-management",
         element: <ProductManagement />,
+      },
+      {
+        path: "/notifications",
+        element: <NotificationList />,
       },
       {
         path: "/add-product",

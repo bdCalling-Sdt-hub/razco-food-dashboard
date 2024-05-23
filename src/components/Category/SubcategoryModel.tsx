@@ -9,6 +9,7 @@ import {
   useUpdateSubCategoryMutation,
 } from "@/redux/slices/admin/subCategoryApi";
 import { imageURL } from "@/redux/api/baseApi";
+import toast from "react-hot-toast";
 
 interface OfferModelProps {
   open: boolean;
@@ -62,7 +63,7 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({
   };
   const handleSubCategory = async () => {
     if (!subCategoryName) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -77,26 +78,25 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({
         const res = await updateSubCategory({ id: subCategory?._id, formData });
 
         if (res?.data?.success === true) {
-          alert("subCategory updated successfully");
+          toast.success("subCategory updated successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       } else {
         const res = await createSubCategory(formData);
         if (res?.data?.success === true) {
-          alert("subCategory created successfully");
+          toast.success("subCategory created successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       }
       setOpen(false);
     } catch (err: any) {
-      console.error(err.message);
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 

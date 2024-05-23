@@ -4,6 +4,7 @@ import { storeUserInfo } from "@/redux/services/auth.service";
 import { useAdminLoginMutation } from "@/redux/slices/admin/adminManageApi";
 import { Button, Checkbox, Form, Input } from "antd";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -13,7 +14,7 @@ const Login = () => {
   useEffect(() => {
     if (isSuccess) {
       if (data) {
-        alert("Login Successfully");
+        toast.success("Login Successfully");
         storeUserInfo({ accessToken: data?.data });
         navigate("/");
       }
@@ -22,8 +23,8 @@ const Login = () => {
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
-        // message.error(errorData.data.message);
-        alert(errorData.data.message);
+
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -33,7 +34,7 @@ const Login = () => {
     try {
       await adminLogin(data);
     } catch (err: any) {
-      console.error(err.message);
+      toast.error(err.message);
     }
   };
   return (

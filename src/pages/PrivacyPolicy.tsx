@@ -7,6 +7,7 @@ import {
 } from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
 import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const PrivacyPolicy = () => {
   const editor = useRef(null);
@@ -21,16 +22,16 @@ const PrivacyPolicy = () => {
         const res = await updatePrivacy({ content });
         // console.log(res);
         if (res?.data?.success) {
-          alert("Update successful");
+          toast.success("Update successful");
         }
       } else {
         const res = await createPrivacy({ content });
         if (res?.data?.success) {
-          alert("Create successful");
+          toast.success("Create successful");
         }
       }
     } catch (err: any) {
-      console.error(err.message);
+      toast.error(err.message);
     }
   };
   return (

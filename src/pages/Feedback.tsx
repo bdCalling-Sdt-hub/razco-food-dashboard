@@ -7,6 +7,7 @@ import {
 import { Input, Table } from "antd";
 import { Reply, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { format } from "timeago.js";
 
 const Feedback = () => {
@@ -94,10 +95,28 @@ const Feedback = () => {
     },
   ];
   const handleDelete = async (id: string) => {
-    try {
-      await deleteFeedback({ _id: id });
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteFeedback({ _id: id });
+        Swal.fire("Deleted!", "The feedback has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire(
+          "Error!",
+          "There was an error deleting the feedback.",
+          "error"
+        );
+      }
     }
   };
   const handlePageChange = (page: number, pageSize?: number) => {

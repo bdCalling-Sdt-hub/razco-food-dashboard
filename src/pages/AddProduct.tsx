@@ -11,7 +11,8 @@ import { useGetSubCategoriesQuery } from "@/redux/slices/admin/subCategoryApi";
 import { Button, Col, Form, Input, Row, Select, Upload } from "antd";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -27,7 +28,7 @@ const AddProduct = () => {
     ? JSON.parse(decodeURIComponent(productsDataString))
     : null;
 
-  // console.log(productsData);
+  const navigate = useNavigate();
   const { data: subCategoryData } = useGetSubCategoriesQuery<
     Record<string, any>
   >({});
@@ -56,20 +57,22 @@ const AddProduct = () => {
       if (productsData) {
         const res = await updateProduct({ id: productsData?._id, formData });
         if (res?.data?.success === true) {
-          alert("Product updated successfully");
+          toast.success("Product updated successfully");
+          navigate("/product-management");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       } else {
         const res = await addProduct(formData);
         if (res?.data?.success === true) {
-          alert("Product create successfully");
+          toast.success("Product create successfully");
+          navigate("/product-management");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       }
     } catch (error: any) {
@@ -96,7 +99,6 @@ const AddProduct = () => {
     return e?.fileList;
   };
   const handleImageChange = (info: any) => {
-    // console.log(info.file?.originFileObj);
     setImageUrl(info.file?.originFileObj);
   };
   const initialFormValues = {
@@ -132,23 +134,24 @@ const AddProduct = () => {
                       onChange={handleImageChange}
                       listType="picture-card"
                       name="productImage"
+                      showUploadList={false}
                     >
-                      <button
-                        style={{
-                          border: 0,
-                          background: "none",
-                        }}
-                        type="button"
-                      >
-                        <Plus />
-                        <div
-                          style={{
-                            marginTop: 8,
-                          }}
-                        >
-                          Upload
+                      {imageUrl ? (
+                        <img
+                          src={
+                            typeof imageUrl === "string"
+                              ? imageUrl
+                              : URL.createObjectURL(imageUrl)
+                          }
+                          alt="Product"
+                          style={{ width: "100%" }}
+                        />
+                      ) : (
+                        <div>
+                          <Plus />
+                          <div style={{ marginTop: 8 }}>Upload</div>
                         </div>
-                      </button>
+                      )}
                     </Upload>
                   </Form.Item>
                 </div>

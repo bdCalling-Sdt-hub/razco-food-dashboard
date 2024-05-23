@@ -2,6 +2,7 @@ import { Form, Input, Modal } from "antd";
 import Button from "../share/Button";
 import { useEffect } from "react";
 import { useMakeAdminMutation } from "@/redux/slices/admin/adminManageApi";
+import toast from "react-hot-toast";
 
 interface OfferModelProps {
   open: boolean;
@@ -14,7 +15,7 @@ const AdminModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
   useEffect(() => {
     if (isSuccess) {
       if (data) {
-        alert("Admin add Successfully");
+        toast.success("Admin add Successfully");
         setOpen(false);
       }
     }
@@ -23,7 +24,7 @@ const AdminModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
       if ("data" in error) {
         const errorData = error as any;
         // message.error(errorData.data.message);
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }

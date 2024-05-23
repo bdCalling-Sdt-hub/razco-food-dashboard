@@ -1,20 +1,22 @@
 import { Table } from "antd";
 import { Link } from "react-router-dom";
 import Title from "../share/Title";
-
-const data = [...Array(4).keys()].map((item, index) => ({
-  productId: "INV001",
-  productsName: "Cucumber",
-  barcode: "4564156",
-  category: "foods",
-  quantity: "500gm",
-  discount: "0%",
-  price: "$15",
-  stock: "500",
-  status: "Available",
-}));
+import { useGetProductsQuery } from "@/redux/slices/admin/productManagementApi";
 
 const ProductList = () => {
+  const { data: productsData } = useGetProductsQuery<Record<string, any>>({});
+
+  const data = productsData?.data?.data.map((item: any, index: number) => ({
+    productId: item?.productId,
+    productName: item?.productName,
+
+    category: item?.category,
+
+    price: item?.price,
+    store: item?.store,
+    status: item?.status,
+  }));
+
   const columns = [
     {
       title: "Product ID",
@@ -23,14 +25,10 @@ const ProductList = () => {
     },
     {
       title: "Product Name",
-      dataIndex: "productsName",
-      key: "productsName",
+      dataIndex: "productName",
+      key: "productName",
     },
-    {
-      title: "Barcode",
-      dataIndex: "barcode",
-      key: "barcode",
-    },
+
     {
       title: "Category",
       dataIndex: "category",
@@ -41,15 +39,11 @@ const ProductList = () => {
       dataIndex: "price",
       key: "price",
     },
+
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-    {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "stock",
+      title: "Store",
+      dataIndex: "store",
+      key: "store",
     },
     {
       title: "Status",

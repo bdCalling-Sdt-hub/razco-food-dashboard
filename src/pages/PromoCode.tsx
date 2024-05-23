@@ -8,6 +8,8 @@ import {
 import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const PromoCode = () => {
   //! Query
@@ -28,18 +30,11 @@ const PromoCode = () => {
   const data = couponData?.data?.data;
   const [deleteCoupon, { isSuccess, error }] = useDeleteCouponMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Admin Delete Successfully");
-        setOpen(false);
-      }
-    }
-
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -104,10 +99,24 @@ const PromoCode = () => {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteCoupon(id);
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteCoupon(id);
+        Swal.fire("Deleted!", "The coupon has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire("Error!", "There was an error deleting the coupon.", "error");
+      }
     }
   };
   return (

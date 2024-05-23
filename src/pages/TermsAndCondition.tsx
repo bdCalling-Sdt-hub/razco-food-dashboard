@@ -7,6 +7,7 @@ import {
 } from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const TermsAndCondition = () => {
   const editor = useRef(null);
@@ -27,16 +28,16 @@ const TermsAndCondition = () => {
         const res = await updateTermsConditions({ content });
         // console.log(res);
         if (res?.data?.success) {
-          alert("Update successful");
+          toast.success("Update successful");
         }
       } else {
         const res = await createTermsConditions({ content });
         if (res?.data?.success) {
-          alert("Create successful");
+          toast.success("Create successful");
         }
       }
     } catch (err: any) {
-      console.error(err.message);
+      toast.error(err.message);
     }
   };
   return (

@@ -19,6 +19,7 @@ export enum tagTypes {
   verify = "verify",
   subCategory = "subCategory",
   faq = "faq",
+  dashboard = "dashboard",
 }
 
-export const tagTypesList = [tagTypes.user];
+export const tagTypesList = [tagTypes];

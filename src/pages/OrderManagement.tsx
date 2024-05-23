@@ -7,6 +7,7 @@ import { Input, Select, Table } from "antd";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import Swal from "sweetalert2";
 // const data = [...Array(50).keys()].map((index) => ({
 //   orderNo: `${index + 1}`,
 //   totalItems: "Cucumber",
@@ -49,15 +50,29 @@ const OrderManagement = () => {
     }
   }, [error, isSuccess]);
   const handleOnchange = async (e: string, id: string) => {
-    try {
-      const res = await updateUserStatus({ status: e, _id: id });
-      if (res?.data?.success === true) {
-        alert("Status Updated");
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update the status?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, update it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        const res = await updateUserStatus({ status: e, _id: id });
+        if (res?.data?.success === true) {
+          Swal.fire("Updated!", "The status has been updated.", "success");
+        }
+      } catch (error: any) {
+        console.error(error?.message);
+        Swal.fire("Error!", "There was an error updating the status.", "error");
       }
-    } catch (error: any) {
-      console.log(error?.message);
     }
   };
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);

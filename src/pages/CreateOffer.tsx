@@ -8,6 +8,8 @@ import {
 import { Table } from "antd";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const CreateOffer = () => {
   //! Query
@@ -27,18 +29,11 @@ const CreateOffer = () => {
 
   const [deleteOffer, { isSuccess, error }] = useDeleteOfferMutation();
   useEffect(() => {
-    if (isSuccess) {
-      if (data) {
-        alert("Offer Delete Successfully");
-        setOpen(false);
-      }
-    }
-
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -96,10 +91,24 @@ const CreateOffer = () => {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteOffer(id);
-    } catch (error: any) {
-      console.error(error.message);
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await deleteOffer(id);
+        Swal.fire("Deleted!", "The offer has been deleted.", "success");
+      } catch (error: any) {
+        console.error(error.message);
+        Swal.fire("Error!", "There was an error deleting the offer.", "error");
+      }
     }
   };
   return (

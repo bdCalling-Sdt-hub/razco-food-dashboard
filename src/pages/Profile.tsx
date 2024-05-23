@@ -7,6 +7,7 @@ import {
   useUpdateProfileMutation,
 } from "@/redux/slices/admin/settingApi";
 import { imageURL } from "@/redux/api/baseApi";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const [openEdit, setOpenEdit] = useState(false);
@@ -52,10 +53,10 @@ const Profile = () => {
       const res = await updateProfile(formData);
 
       if (res?.data?.success === true) {
-        alert("Profile Update Successful");
+        toast.success("Profile Update Successful");
       }
     } catch (error: any) {
-      console.log(error?.message);
+      toast.error(error?.message);
     }
   };
 

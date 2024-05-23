@@ -8,6 +8,7 @@ import {
   useUpdateOfferMutation,
 } from "@/redux/slices/admin/offerApi";
 import { imageURL } from "@/redux/api/baseApi";
+import toast from "react-hot-toast";
 interface ErrorResponse {
   error?: {
     data?: {
@@ -55,7 +56,7 @@ const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen, offer }) => {
 
   const handleOffer = async () => {
     if (!offerName || !percentage) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -71,20 +72,20 @@ const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen, offer }) => {
         const res = await updateOffer({ id: offer._id, formData });
 
         if (res?.data?.success === true) {
-          alert("Offer updated successfully");
+          toast.success("Offer updated successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       } else {
         const res = await createOffer(formData);
         if (res?.data?.success === true) {
-          alert("Offer created successfully");
+          toast.success("Offer created successfully");
         }
         if (res?.error) {
           //@ts-ignore
-          alert(res?.error?.data?.message);
+          toast.error(res?.error?.data?.message);
         }
       }
       setOpen(false);

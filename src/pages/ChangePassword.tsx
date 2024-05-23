@@ -2,6 +2,7 @@ import Title from "@/components/share/Title";
 import { useChangePasswordMutation } from "@/redux/slices/admin/settingApi";
 import { Button, Form, Input } from "antd";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const ChangePassword = () => {
   const [changePassword, { isLoading, data, isSuccess, error }] =
@@ -9,7 +10,7 @@ const ChangePassword = () => {
   useEffect(() => {
     if (isSuccess) {
       if (data) {
-        alert("Password change Successfully");
+        toast.success("Password change Successfully");
       }
     }
 
@@ -17,7 +18,7 @@ const ChangePassword = () => {
       if ("data" in error) {
         const errorData = error as any;
 
-        alert(errorData.data.message);
+        toast.error(errorData.data.message);
       } else {
         console.error("Login error:", error);
       }
@@ -32,7 +33,7 @@ const ChangePassword = () => {
         confirmPassword: data?.confirmPassword,
       });
     } catch (err: any) {
-      console.error(err.message);
+      toast.error(err.message);
     }
   };
   return (

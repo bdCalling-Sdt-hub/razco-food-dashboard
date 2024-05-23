@@ -7,6 +7,7 @@ import {
 } from "@/redux/slices/admin/settingApi";
 import JoditEditor from "jodit-react";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const About = () => {
   const editor = useRef(null);
@@ -38,16 +39,16 @@ const About = () => {
         const res = await updateAboutUs({ content });
 
         if (res?.data?.success) {
-          alert("Update successful");
+          toast.success("Update successful");
         }
       } else {
         const res = await createAboutUs({ content });
         if (res?.data?.success) {
-          alert("Create successful");
+          toast.success("Create successful");
         }
       }
     } catch (err: any) {
-      console.error(err.message);
+      toast.error(err.message);
     }
   };
   return (
