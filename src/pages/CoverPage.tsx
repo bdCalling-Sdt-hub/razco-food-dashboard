@@ -15,7 +15,7 @@ const CoverPage = () => {
   //! Query
   const query: Record<string, any> = {};
   const [page, setPage] = useState<number>(1);
-  const [size, setSize] = useState<number>(10);
+  const [size, setSize] = useState<number>(3);
   // set query for filter and search
   query["limit"] = size;
   query["page"] = page;

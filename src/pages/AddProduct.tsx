@@ -92,7 +92,7 @@ const AddProduct = () => {
     if (Array.isArray(e)) {
       return e;
     }
-    console.log(e?.fileList);
+
     return e?.fileList;
   };
   const handleImageChange = (info: any) => {

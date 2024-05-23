@@ -13,7 +13,6 @@ import {
   ShoppingCart,
   SquareMenu,
   Tag,
-  User,
   Users,
 } from "lucide-react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -24,8 +23,10 @@ import {
   useMyProfileQuery,
   useNotificationsQuery,
 } from "@/redux/slices/admin/settingApi";
-import { imageURL } from "@/redux/api/baseApi";
+import { imageURL, socketURL } from "@/redux/api/baseApi";
 const { Header, Sider, Content } = Layout;
+import io from "socket.io-client";
+import { useEffect } from "react";
 
 const menuItems = [
   {
@@ -146,10 +147,30 @@ const { SubMenu } = Menu;
 const Dashboard = () => {
   const navigate = useNavigate();
   const isUser = isLoggedIn();
-  const { data: notifications } = useNotificationsQuery({});
-  const { data: userData } = useMyProfileQuery({});
+  if (!isUser) {
+    navigate("/auth/login");
+  }
 
+  const { data: notifications, refetch } = useNotificationsQuery({});
+  const { data: userData } = useMyProfileQuery({});
   const myProfile = userData?.data;
+
+  useEffect(() => {
+    const socket = io(socketURL);
+
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.on("notification", (notification) => {
+      console.log("New notification:", notification);
+      refetch();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [isUser, navigate, refetch]);
 
   if (!isUser) {
     navigate("/auth/login");
@@ -261,7 +282,7 @@ const Dashboard = () => {
             height: `calc(100vh - 80px)`,
           }}
         >
-          <div className="bg-white h-[calc(100vh-100px)] m-2 rounded p-3 overflow-hidden">
+          <div className="bg-white h-[calc(100vh-100px)] m-2 rounded p-3  overflow-y-auto">
             <Outlet />
           </div>
         </Content>
