@@ -82,15 +82,11 @@ const ProductManagement = () => {
       dataIndex: "price",
       key: "price",
     },
+
     {
-      title: "Quantity",
+      title: "Store",
       dataIndex: "store",
-      key: "quantity",
-    },
-    {
-      title: "Stock",
-      dataIndex: "status",
-      key: "stock",
+      key: "store",
     },
     {
       title: "Status",
@@ -115,6 +111,7 @@ const ProductManagement = () => {
       ),
     },
   ];
+
   const handleDelete = async (id: string) => {
     const confirmation = await Swal.fire({
       title: "Are you sure?",
@@ -140,6 +137,7 @@ const ProductManagement = () => {
       }
     }
   };
+
   const handlePageChange = (page: number, pageSize?: number) => {
     setPage(page);
     if (pageSize) {

@@ -20,6 +20,7 @@ export enum tagTypes {
   subCategory = "subCategory",
   faq = "faq",
   dashboard = "dashboard",
+  notification = "notification",
 }
 
 export const tagTypesList = [tagTypes];

@@ -108,7 +108,7 @@ export const settingApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: [tagTypes.profile],
+      providesTags: [tagTypes.notification],
     }),
     updateProfile: build.mutation({
       query: (data) => ({

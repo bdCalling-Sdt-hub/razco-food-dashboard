@@ -61,8 +61,8 @@ const AdminModel: React.FC<OfferModelProps> = ({ open, setOpen }) => {
           <Form.Item name="password" label="Password">
             <Input placeholder="Enter password" size="large" />
           </Form.Item>
-          <Form.Item label="User Type">
-            <Input placeholder="Enter user type" size="large" />
+          <Form.Item name="phone" label="Phone number">
+            <Input placeholder="Enter phone number" size="large" />
           </Form.Item>
 
           <Button className="px-10 mx-auto mt-5">

@@ -58,13 +58,13 @@ const PromoCode = () => {
     },
     {
       title: "Discount",
-      dataIndex: "discount",
-      key: "discount",
+      dataIndex: "couponDiscount",
+      key: "couponDiscount",
     },
     {
       title: "Validity Date",
-      dataIndex: "validityDate",
-      key: "validityDate",
+      dataIndex: "expireDate",
+      key: "expireDate",
     },
     {
       title: "Target Points",

@@ -26,7 +26,7 @@ import {
 import { imageURL, socketURL } from "@/redux/api/baseApi";
 const { Header, Sider, Content } = Layout;
 import io from "socket.io-client";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 const menuItems = [
   {
@@ -149,22 +149,22 @@ const Dashboard = () => {
   const { data: userData } = useMyProfileQuery({});
   const myProfile = userData?.data;
 
-  useEffect(() => {
-    const socket = io(socketURL);
+  const socket = useMemo(() => io(socketURL), []);
 
+  useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to socket server");
     });
-
-    socket.on("notification", (notification) => {
-      console.log("New notification:", notification);
+    // console.log("Test");
+    socket.on("admin-notifications", (notification) => {
+      //console.log("New notification:", notification);
       refetch();
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [isUser, navigate, refetch]);
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, []);
 
   if (!isUser) {
     navigate("/auth/login");
@@ -256,7 +256,7 @@ const Dashboard = () => {
         >
           <div className="flex items-center gap-5">
             {" "}
-            <Badge count={notifications?.data?.length}>
+            <Badge count={notifications?.unreadNotifications}>
               <Link to={"/notifications"}>
                 <Bell size={30} color="#fff" />
               </Link>

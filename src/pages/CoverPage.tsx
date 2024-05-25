@@ -33,8 +33,8 @@ const CoverPage = () => {
     bannerImage: (
       <img
         style={{
-          width: 150,
-          height: 100,
+          width: 200,
+          height: 80,
           borderRadius: 10,
         }}
         src={`${imageURL}/${item?.bannerImage}`}

@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 //   action: "",
 // }));
 
-const statusTypes = ["Pending", "Packing", "Processing", "Shipping", "Shipped"];
+const statusTypes = ["packing", "processing", "shipping", "shipped"];
 
 const OrderManagement = () => {
   //! Query
@@ -93,6 +93,11 @@ const OrderManagement = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Delivery Time",
