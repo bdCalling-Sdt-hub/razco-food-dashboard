@@ -106,6 +106,12 @@ const AddProduct = () => {
     offer: productsData ? productsData.offer?._id : undefined,
   };
 
+  const [fileList, setFileList] = useState([]);
+
+  const handleChangeImage = (e: any) => {
+    setFileList([...fileList, e.target.files[0]]);
+  };
+
   return (
     <div>
       <Title>Add Product</Title>
@@ -125,34 +131,37 @@ const AddProduct = () => {
             <Row gutter={{ lg: 10 }}>
               <Col span={24}>
                 <div>
+                  <div className="flex items-center gap-4">
+                    {fileList &&
+                      fileList?.map((item, index) => {
+                        return (
+                          <img
+                            key={index}
+                            src={URL?.createObjectURL(item)}
+                            className="w-[120px] h-[120px] rounded-lg"
+                            alt=""
+                          />
+                        );
+                      })}
+                  </div>
+
                   <Form.Item
                     label="Upload product image"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                   >
-                    <Upload
-                      onChange={handleImageChange}
-                      listType="picture-card"
-                      name="productImage"
-                      showUploadList={false}
+                    <input
+                      onChange={handleChangeImage}
+                      type="file"
+                      style={{ display: "none" }}
+                      id="img"
+                    />
+                    <label
+                      htmlFor="img"
+                      className=" border border-dashed w-[120px] h-[120px] rounded-lg flex items-center justify-center"
                     >
-                      {imageUrl ? (
-                        <img
-                          src={
-                            typeof imageUrl === "string"
-                              ? imageUrl
-                              : URL.createObjectURL(imageUrl)
-                          }
-                          alt="Product"
-                          style={{ width: "100%" }}
-                        />
-                      ) : (
-                        <div>
-                          <Plus />
-                          <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
-                      )}
-                    </Upload>
+                      Upload
+                    </label>
                   </Form.Item>
                 </div>
               </Col>

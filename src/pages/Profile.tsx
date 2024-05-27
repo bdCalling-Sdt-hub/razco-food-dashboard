@@ -1,6 +1,6 @@
-import { Edit } from "lucide-react";
+import { Edit, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Row, Upload } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
   useMyProfileQuery,
@@ -14,7 +14,9 @@ const Profile = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  const { data: profileData } = useMyProfileQuery({});
+  const { data: profileData, isLoading: profileLoading } = useMyProfileQuery(
+    {}
+  );
   const initialFormValues = profileData?.data;
 
   const [updateProfile, { isLoading, isSuccess, error }] =
@@ -30,6 +32,13 @@ const Profile = () => {
       }
     }
   }, [error, isSuccess]);
+  if (profileLoading) {
+    return <p>Loading...</p>;
+  }
+
+  const src = profileData?.data?.profileImage?.startsWith("https")
+    ? profileData?.data?.profileImage
+    : `${imageURL}/${profileData?.data?.profileImage}`;
 
   const onFinish = async (values: any) => {
     try {
@@ -60,54 +69,59 @@ const Profile = () => {
     }
   };
 
-  const handleImageChange = (info: any) => {
-    if (info.file.originFileObj) {
-      const file = info.file.originFileObj;
-      setImage(file);
-
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageChange = (e: any) => {
+    const file = e.target.files[0];
+    setImage(file);
+    const url = URL.createObjectURL(file);
+    setImagePreview(url);
+    console.log(url);
   };
 
   return (
     <div className="w-2/4 mx-auto">
       <div className="text-center bg-base p-4 rounded">
         <div className="flex justify-end">
-          <button
-            className="text-primary"
-            onClick={() => setOpenEdit(!openEdit)}
-          >
-            <Edit size={20} />
-          </button>
-        </div>
-        <div className="relative w-28 h-28 mx-auto">
-          <img
-            src={
-              imagePreview ||
-              (initialFormValues?.profileImage &&
-                `${imageURL}/${initialFormValues?.profileImage}`) ||
-              "https://i.ibb.co/cXq8yDY/destination-italiy-single3.jpg"
-            }
-            alt=""
-            className="w-28 h-28 rounded-full inline-block"
-          />
-          {openEdit && (
-            <div className="absolute top-0 right-0">
-              <Upload
-                name="profileImage"
-                showUploadList={false}
-                onChange={handleImageChange}
-              >
-                <Button icon={<UploadOutlined />} />
-              </Upload>
-            </div>
+          {!openEdit && (
+            <button
+              className="text-primary"
+              onClick={() => setOpenEdit(!openEdit)}
+            >
+              <Edit size={20} />
+            </button>
           )}
         </div>
-        <h2 className="text-2xl mt-2">{initialFormValues?.name}</h2>
+        <div className="relative w-28 h-28 mx-auto">
+          {openEdit ? (
+            <div>
+              <input
+                onChange={handleImageChange}
+                type="file"
+                className="hidden"
+                id="imageUpload"
+              />
+              <label
+                htmlFor="imageUpload"
+                className="w-28 h-28 border relative cursor-pointer "
+              >
+                <img
+                  src={imagePreview ? imagePreview : src}
+                  alt=""
+                  className="w-28 h-28 rounded-full "
+                />
+                <div className="absolute top-16 -left-2">
+                  <Upload color="#fff" />
+                </div>
+              </label>
+            </div>
+          ) : (
+            <img
+              src={src}
+              alt=""
+              className="w-28 h-28 rounded-full inline-block"
+            />
+          )}
+        </div>
+        <h2 className="text-2xl mt-10">{initialFormValues?.name}</h2>
       </div>
 
       <div>

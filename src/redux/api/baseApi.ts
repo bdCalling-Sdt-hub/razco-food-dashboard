@@ -8,14 +8,14 @@ const authToken = getFromLocalStorage(authKey);
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://192.168.10.16:5000/api/v1",
+    baseUrl: "http://146.190.130.172:5000/api/v1",
     headers: { Authorization: `Bearer ${authToken}` },
   }),
   endpoints: () => ({}),
   tagTypes: tagTypesList,
 });
-export const imageURL = "http://192.168.10.16:5000";
+export const imageURL = "http://146.190.130.172:5000";
 export const baseUrl = axios.create({
-  baseURL: "http://192.168.10.16:5000/api/v1",
+  baseURL: "http://146.190.130.172:5000/api/v1",
 });
-export const socketURL = "http://192.168.10.16:5000";
+export const socketURL = "http://146.190.130.172:5000";
