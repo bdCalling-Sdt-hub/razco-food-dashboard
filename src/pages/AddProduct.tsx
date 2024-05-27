@@ -9,7 +9,7 @@ import {
 } from "@/redux/slices/admin/productManagementApi";
 import { useGetSubCategoriesQuery } from "@/redux/slices/admin/subCategoryApi";
 import { Button, Col, Form, Input, Row, Select, Upload } from "antd";
-import { Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,8 +25,10 @@ const AddProduct = () => {
   const searchParams = new URLSearchParams(location.search);
   const productsDataString = searchParams.get("products");
   const productsData = productsDataString
-    ? JSON.parse(decodeURIComponent(productsDataString))
+    ? JSON?.parse(decodeURIComponent(productsDataString))
     : null;
+
+  console.log(productsData);
 
   const navigate = useNavigate();
   const { data: subCategoryData } = useGetSubCategoriesQuery<
@@ -35,7 +37,7 @@ const AddProduct = () => {
   const [addProduct, { isLoading }] = useAddProductMutation();
   const [updateProduct] = useUpdateProductMutation();
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (productsData) {
       setImageUrl(
         productsData.productImage
@@ -45,14 +47,25 @@ const AddProduct = () => {
     } else {
       setImageUrl(null);
     }
-  }, [productsData]);
+  }, [productsData]); */
+
+  const [fileList, setFileList] = useState([]);
+  
   const onFinish = async (values: any) => {
     try {
+      console.log(fileList);
       const formData = new FormData();
-      formData.append("productImage", imageUrl as File);
+
+      for (const image of fileList) {
+        formData.append("productImage", image);
+      }
+
       Object.keys(values).forEach((key) => {
-        formData.append(key, values[key]);
+        console.log(formData.append(key, values[key]));
       });
+
+
+      formData.forEach(value => console.log(value))
 
       if (productsData) {
         const res = await updateProduct({ id: productsData?._id, formData });
@@ -66,6 +79,7 @@ const AddProduct = () => {
         }
       } else {
         const res = await addProduct(formData);
+        console.log(res)
         if (res?.data?.success === true) {
           toast.success("Product create successfully");
           navigate("/product-management");
@@ -90,27 +104,24 @@ const AddProduct = () => {
     console.log(value);
   };
 
-  const normFile = (e: any) => {
-    console.log(e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-
-    return e?.fileList;
-  };
-  const handleImageChange = (info: any) => {
-    setImageUrl(info.file?.originFileObj);
-  };
+  
+  
   const initialFormValues = {
     ...productsData,
     offer: productsData ? productsData.offer?._id : undefined,
   };
 
-  const [fileList, setFileList] = useState([]);
+  
 
   const handleChangeImage = (e: any) => {
     setFileList([...fileList, e.target.files[0]]);
+    
   };
+
+  const handleRemove=(id:any)=>{
+    const data = fileList.filter((_item, index)=> index !== id);
+    setFileList(data);
+  }
 
   return (
     <div>
@@ -130,39 +141,43 @@ const AddProduct = () => {
           <Col span={12}>
             <Row gutter={{ lg: 10 }}>
               <Col span={24}>
-                <div>
+                <div className="mb-3">
+                  <label htmlFor="" className="block mb-2">Upload product image</label>
                   <div className="flex items-center gap-4">
+                    {}
+
                     {fileList &&
                       fileList?.map((item, index) => {
                         return (
-                          <img
-                            key={index}
-                            src={URL?.createObjectURL(item)}
-                            className="w-[120px] h-[120px] rounded-lg"
-                            alt=""
-                          />
+                          <div key={index} className="w-[120px] h-[120px] relative">
+                            <Trash onClick={()=>handleRemove(index)}  size={16} color="red" className="absolute right-2 top-2 cursor-pointer"/>
+                            <img
+
+                              src={URL?.createObjectURL(item)}
+                              className="rounded-lg w-full h-full"
+                              alt=""
+                              />
+                          </div>
                         );
                       })}
+
+                    <div style={{display: fileList?.length > 2 ? "none" : "block"}}>
+                      <input
+                        onChange={handleChangeImage}
+                        type="file"
+                        style={{ display: "none" }}
+                        id="img"
+                      />
+                      <label
+                        htmlFor="img"
+                        className=" border cursor-pointer border-dashed w-[120px] h-[120px] rounded-lg flex items-center justify-center"
+                      >
+                          
+                        Upload
+                      </label>
+                    </div>
                   </div>
 
-                  <Form.Item
-                    label="Upload product image"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                  >
-                    <input
-                      onChange={handleChangeImage}
-                      type="file"
-                      style={{ display: "none" }}
-                      id="img"
-                    />
-                    <label
-                      htmlFor="img"
-                      className=" border border-dashed w-[120px] h-[120px] rounded-lg flex items-center justify-center"
-                    >
-                      Upload
-                    </label>
-                  </Form.Item>
                 </div>
               </Col>
               <Col span={12}>

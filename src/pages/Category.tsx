@@ -44,6 +44,8 @@ const Category = () => {
     setSelectedOffer(offer);
     setOpen(true);
   };
+
+  
   const columns = [
     {
       title: "S.NO",

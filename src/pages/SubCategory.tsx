@@ -24,6 +24,8 @@ const SubCategory = () => {
   const { data: subCategoryData } = useGetSubCategoriesQuery<
     Record<string, any>
   >({ ...query });
+
+
   const data = subCategoryData?.data?.data;
   const [deleteSubCategory, { isSuccess, error }] =
     useDeleteSubCategoryMutation();
@@ -45,6 +47,8 @@ const SubCategory = () => {
     setSelectedOffer(offer);
     setOpen(true);
   };
+
+
   const columns = [
     {
       title: "S.NO",
@@ -114,12 +118,15 @@ const SubCategory = () => {
 
   return (
     <div>
-      <Title>Sub Category Management</Title>
-      <div className="flex justify-between items-center mb-10 mt-4">
+      
+      <div className="flex justify-between items-center mb-6 mt-4">
+        <Title>Sub Category Management</Title>
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Add Sub Category
         </Button>
       </div>
+
+
       <Table
         dataSource={data}
         columns={columns}

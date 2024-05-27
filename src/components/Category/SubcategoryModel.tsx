@@ -25,7 +25,7 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({
   const [imageUrl, setImageUrl] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
   const [image, setImage] = useState(null);
-  const [offer, setOffer] = useState("Foods");
+  const [offer, setOffer] = useState("Select Category");
 
   const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
   const newCategories = categoryData?.data?.data;
@@ -69,6 +69,7 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({
 
     const formData = new FormData();
     formData.append("subcategoryName", subCategoryName);
+    formData.append("category", offer);
     if (image) {
       formData.append("subcategoryImage", image);
     }
@@ -86,6 +87,7 @@ const SubcategoryModel: React.FC<OfferModelProps> = ({
         }
       } else {
         const res = await createSubCategory(formData);
+        console.log(res)
         if (res?.data?.success === true) {
           toast.success("subCategory created successfully");
         }
