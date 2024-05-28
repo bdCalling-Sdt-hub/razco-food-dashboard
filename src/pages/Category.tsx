@@ -59,14 +59,9 @@ const Category = () => {
       key: "categoryName",
     },
     {
-      title: "Store Products",
-      dataIndex: "storeProduct",
-      key: "storeProduct",
-    },
-    {
       title: "Sub Categories",
-      dataIndex: "subCatagories",
-      key: "subCatagories",
+      dataIndex: "subcategoryCreated",
+      key: "subcategoryCreated",
     },
     {
       title: <div className="text-right">Action</div>,

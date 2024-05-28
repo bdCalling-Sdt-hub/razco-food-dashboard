@@ -28,6 +28,15 @@ export const productManagementApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.product],
     }),
+    getSingleProduct: build.query({
+      query: (id) => {
+        return {
+          url: `product/${id}`,
+          method: "GET"
+        };
+      },
+      providesTags: [tagTypes.product],
+    }),
     updateProduct: build.mutation({
       query: ({ id, formData }) => ({
         url: `/product/${id}`,
@@ -51,4 +60,5 @@ export const {
   useGetProductsQuery,
   useDeleteProductMutation,
   useUpdateProductMutation,
+  useGetSingleProductQuery
 } = productManagementApi;

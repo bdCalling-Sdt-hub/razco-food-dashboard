@@ -99,8 +99,8 @@ const ProductManagement = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2">
-          <button onClick={()=>localStorage.setItem("product", JSON.stringify(data))} className="text-primary">
-            <Link to={`/add-product?products=${JSON.stringify(data)}`}>
+          <button className="text-primary">
+            <Link to={`/edit-product/${data?._id}`}>
               <Edit />
             </Link>
           </button>

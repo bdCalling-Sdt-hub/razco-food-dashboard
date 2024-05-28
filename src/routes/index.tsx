@@ -7,6 +7,7 @@ import ChangePassword from "@/pages/ChangePassword";
 import CoverPage from "@/pages/CoverPage";
 import CreateOffer from "@/pages/CreateOffer";
 import DashboardHome from "@/pages/DashboardHome";
+import EditProduct from "@/pages/EditProduct";
 import FAQPage from "@/pages/FAQ";
 import Feedback from "@/pages/Feedback";
 import ForgetPassword from "@/pages/ForgetPassword";
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "/add-product",
         element: <AddProduct />,
+      },
+      {
+        path: "/edit-product/:id",
+        element: <EditProduct />,
       },
       {
         path: "/order-management",

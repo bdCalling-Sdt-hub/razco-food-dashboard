@@ -1,100 +1,171 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable no-unsafe-optional-chaining */
+import React, { useEffect, useState } from 'react'
 import Title from "@/components/share/Title";
+import { Button, DatePicker, Form, Input, Select } from 'antd';
+import moment from 'moment';
+import { useUpdateProductMutation} from "@/redux/slices/admin/productManagementApi";
+import { useNavigate, useParams } from 'react-router-dom';
+import { CookingPot, Trash } from 'lucide-react';
+import { imageURL } from '@/redux/api/baseApi';
 import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
+import { useGetSingleProductQuery } from "@/redux/slices/admin/productManagementApi";
 import { useGetOffersQuery } from "@/redux/slices/admin/offerApi";
-import {useAddProductMutation} from "@/redux/slices/admin/productManagementApi";
 import { useGetSubCategoriesQuery } from "@/redux/slices/admin/subCategoryApi";
-import { Button, DatePicker, Form, Input, Select } from "antd";
-import { Trash } from "lucide-react";
-import moment from "moment";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 const { Option } = Select;
 
-const AddProduct = () => {
-  const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
-  const { data: offerData } = useGetOffersQuery<Record<string, any>>({});
-  const [price, setPrice] = useState<number>()
-  const [selectedOffer, setSelectedOffer] = useState<{ id: string; discount: string } | null>(null);
-  
+const EditProduct = ():React.JSX.Element => {
+    const [fileList, setFileList] = useState<File[]>([]);
+    const [imageToDelete, setImageToDelete] = useState<string[]>([]);
+    const [imageList, setImageList] = useState<File[]>([]);
+    const [updateProduct] = useUpdateProductMutation();
+    const { data: categoryData } = useGetCategorysQuery<Record<string, any>>({});
+    const { data: offerData } = useGetOffersQuery<Record<string, any>>({});
+    const { data: subCategoryData } = useGetSubCategoriesQuery<Record<string, any>>({});
+    const { id }  = useParams();
+    const { data: product } = useGetSingleProductQuery(id);
+    const navigate = useNavigate();
+    const [price, setPrice] = useState<number>()
+    const [selectedOffer, setSelectedOffer] = useState<{ id: string; discount: string } | null>(null);
 
-  const navigate = useNavigate();
-  const { data: subCategoryData } = useGetSubCategoriesQuery<Record<string, any>>({});
-  const [addProduct, { isLoading }] = useAddProductMutation();
-
-  const [fileList, setFileList] = useState<File[]>([]);
-  
-  const onFinish = async (values: any) => {
-    const formData = new FormData();
-    formData.append("expireDate", JSON.stringify(moment(values?.expireDates)?.format('YYYY-MM-DD')))
-    formData.append("offer", values?.offers?.split('|')[0]);
-      
-    for (const image of fileList) {
-      formData.append("productImage", image);
-    }
-
-    Object.keys(values).forEach((key) => {
-      formData.append(key, values[key]);
-    });
-
-    formData.forEach((values)=> console.log(values))
-
-
-    await addProduct(formData).then((response)=>{
-      if(response?.data?.statusCode === 200){
-        toast.success("Product create successfully");
-      navigate("/product-management");
-      }
-    })
-  };
-
-  const handleChangeImage = (e: any) => {
-    setFileList([...fileList, e.target.files[0]]);
-  };
-
-  const handleRemove=(id:any)=>{
-    const data = fileList.filter((_item, index)=> index !== id);
-    setFileList(data);
-  }
-
-  const handleOffer=(value: string, _option:any)=>{
-    const [id, percentage] = value.split('|');
-    setSelectedOffer({ id: id, discount: percentage });
-  }
-
-  const [form] = Form.useForm();
+    const [form] = Form.useForm();
 
 
     useEffect(()=>{
+        if (product) {
+            form.setFieldsValue(product?.data);
+            setImageList([...product?.data?.productImage])
+            setPrice(product?.data?.price)
+        }
+    }, [product, form]);
+
+
+
+    const onFinish = async (values: any) => {
+            const formData = new FormData();
+            formData.append("expireDate", JSON.stringify(moment(values?.expireDates)?.format('YYYY-MM-DD')))
+    
+            for (const image of imageToDelete) {
+                formData.append("imagesToDelete[]", image);
+            }
+    
+            for (const image of imageList) {
+                formData.append("productImage", image);
+            }
+    
+            Object.keys(values).forEach((key) => {
+                formData.append(key, values[key]);
+            });
+
+            formData.forEach((values)=>console.log(values))
+    
+            await updateProduct({ id: id, formData }).then((response)=>{
+                if(response.data.statusCode === 200){
+                    toast.success("Product updated successfully");
+                    navigate("/product-management");
+                }
+            })
+    };
+
+    const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFileList([...fileList, e.target.files[0]]);
+        }
+    };
+    
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setImageList([...imageList, e.target.files[0]]);
+        }
+    };
+    
+    const handleRemove=(id:any)=>{
+        const data = fileList.filter((_item, index)=> index !== id);
+        setFileList(data);
+    }
+    
+    const handleImageRemove=(value:any)=>{
+        const data = imageList.filter((item, _index)=> item !== value);
+        setImageList(data);
+        setImageToDelete([...imageToDelete, value]);
+    }
+
+
+    const handleOffer=(value: string, _option:any)=>{
+        const [id, percentage] = value.split('|');
+        setSelectedOffer({ id: id, discount: percentage });
+    }
+    
+    
+    useEffect(()=>{
         if (selectedOffer && price !== undefined) {
-          const discount = (price  *  parseFloat(selectedOffer.discount)) / 100;
-          const final = { discountPrice: price - discount };
-          form.setFieldsValue(final);
+            const discount = (price  *  parseFloat(selectedOffer.discount)) / 100;
+            const final = { discountPrice: price - discount };
+            form.setFieldsValue(final);
         }
     }, [selectedOffer, form, price]);
+    
+    useEffect(()=>{
+        if (selectedOffer) {
+            form.setFieldsValue(selectedOffer);
+        }
+    }, [selectedOffer, form]);
 
-  useEffect(()=>{
-    if (selectedOffer) {
-      form.setFieldsValue(selectedOffer);
-    }
-  }, [selectedOffer, form]);
+    
 
-  return (
-    <div>
-      <Title>Add Product</Title>
 
-      <Form
+
+    return (
+        <div>
+            <Title>Edit Product</Title>
+
+
+            <Form
+                form={form}
                 layout="vertical"
                 onFinish={onFinish}
                 className="mt-5 mx-28 grid grid-cols-12 gap-6"
-                form={form}
             >
 
                 <div className='col-span-6'>
                     <div className="mb-3 w-full ">
-                      <label htmlFor="" className="block mb-2">Upload product image</label>
-                      <div className="flex items-center gap-4">
+                        <label htmlFor="" className="block mb-2">Upload product image</label>
+                        {
+                            imageList ?
+                            <div className="flex items-center gap-4">
+                                    {
+                                        imageList?.map((item:any, index:number)=>{
+                                        return (
+                                            <div key={index} className="relative">
+                                            <img
+                                                src={` ${typeof item  === "object" ? URL?.createObjectURL(item) : `${imageURL}${item}` } `}
+                                                className="rounded-lg w-[120px] h-[120px]"
+                                                alt=""
+                                            />
+                                            <Trash onClick={()=>handleImageRemove(item)} size={22} color="red" className="absolute right-2 top-2 cursor-pointer"/>
+                                            </div>
+                                        )
+                                        })
+                                    }
+
+                                    <div style={{display: imageList?.length > 2 ? "none" : "block"}}>
+                                        <input
+                                        onChange={handleImageChange}
+                                        type="file"
+                                        style={{ display: "none" }}
+                                        id="img"
+                                        />
+                                        <label
+                                        htmlFor="img"
+                                        className=" border cursor-pointer border-dashed w-[120px] h-[120px] rounded-lg flex items-center justify-center"
+                                        >
+                                            
+                                        Upload
+                                        </label>
+                                    </div>
+                            </div>
+                            :
+                            <div className="flex items-center gap-4">
                                 {
                                     fileList &&
                                     fileList?.map((item, index) => {
@@ -124,7 +195,8 @@ const AddProduct = () => {
                                         Upload
                                     </label>
                                 </div>
-                        </div>
+                            </div>
+                        }
                     </div>
                     
                     <div className='grid grid-cols-12 gap-6'>
@@ -241,10 +313,10 @@ const AddProduct = () => {
                             </Form.Item>
 
                             <Form.Item 
-                              className='col-span-12' 
-                              label="Product Price" 
-                              name="price"
-                              style={{marginBottom: 0}}
+                                className='col-span-12' 
+                                label="Product Price" 
+                                name="price"
+                                style={{marginBottom: 0}}
                             >
                                 <Input 
                                     size="large" 
@@ -255,7 +327,7 @@ const AddProduct = () => {
 
                             <Form.Item 
                                 className='col-span-4' 
-                                name="offers" 
+                                name="offer" 
                                 label="Offer"
                                 style={{marginBottom: 0}}
                             >
@@ -266,7 +338,7 @@ const AddProduct = () => {
                                 >
                                     {offerData &&
                                         offerData.data.data.map((ct: any) => (
-                                            <Option key={ct._id} value={`${ct._id}|${ct.percentage}`}>
+                                            <Option key={ct._id} value={`${selectedOffer ? `${ct._id}|${ct.percentage}` : `${ct._id.toString()}`}`}>
                                                 {ct.offerName}
                                             </Option>
                                         ))
@@ -282,7 +354,7 @@ const AddProduct = () => {
                                 style={{marginBottom: 0}}
                             >
                                 <Input
-                                    type="text"
+                                    type="number"
                                     size="large"
                                     placeholder="Discount Percentage"
                                 />
@@ -315,7 +387,7 @@ const AddProduct = () => {
                                     {
                                         categoryData &&
                                         categoryData.data.data.map((ct: any) => (
-                                            <Option key={ct._id.toString()} value={ct.categoryName}>
+                                            <Option key={ct._id} value={ct.categoryName}>
                                             {ct.categoryName}
                                             </Option>
                                         ))
@@ -350,7 +422,7 @@ const AddProduct = () => {
                                     className="bg-secondary px-28 h-10 text-lg ml-auto block"
                                     htmlType="submit"
                                 >
-                                    { isLoading ? "Publishing" : "Publish"}
+                                    {"Publish"}
                                 </Button>
                             </Form.Item>
                     </div>
@@ -358,8 +430,8 @@ const AddProduct = () => {
             </Form>
 
 
-    </div>
-  );
-};
+        </div>
+    )
+}
 
-export default AddProduct;
+export default EditProduct

@@ -57,14 +57,15 @@ const SubCategory = () => {
       render: (text: string, record: any, index: number) => index + 1,
     },
     {
-      title: "Subcategory Name",
-      dataIndex: "subcategoryName",
-      key: "subcategoryName",
+      title: "Category Name",
+      dataIndex: "categoryName",
+      key: "categoryName",
+      render: ((_, record:any)=> <p>{record?.category?.categoryName}</p>)
     },
     {
-      title: "Store Products",
-      dataIndex: "clickedCount",
-      key: "storeProduct",
+      title: "Sub Category",
+      dataIndex: "subcategoryName",
+      key: "subcategoryName",
     },
     {
       title: <div className="text-right">Action</div>,
