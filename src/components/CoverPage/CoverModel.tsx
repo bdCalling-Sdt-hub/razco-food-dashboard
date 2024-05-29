@@ -113,7 +113,8 @@ const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen, cover }) => {
         footer={false}
       >
         {/* <Form onFinish={onFinish} layout="vertical"> */}
-        <Form.Item label="Cover Name">
+        <label htmlFor="" className="block mb-2">Cover Name</label>
+        <Form.Item>
           <Input
             onChange={(e) => setCoverName(e.target.value)}
             placeholder="Write cover name"

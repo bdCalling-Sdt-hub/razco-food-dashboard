@@ -57,12 +57,12 @@ const ProductList = () => {
         <Title className="font-bold mb-5">Products List</Title>
         <Link
           to="/product-management"
-          className="text-secondary text-lg hover:underline"
+          className="text-secondary hover:text-secondary text-[16px] underline hover:underline"
         >
           View all
         </Link>
       </div>
-      <Table dataSource={data} columns={columns} pagination={false} />
+      <Table dataSource={data?.slice(0 ,4)} columns={columns} pagination={false} />
     </div>
   );
 };

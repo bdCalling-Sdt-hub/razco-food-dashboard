@@ -127,11 +127,10 @@ const AddProduct = () => {
                         </div>
                     </div>
                     
-                    <div className='grid grid-cols-12 gap-6'>
-                        <Form.Item 
+                    <Form.Item 
                             label="Validity Date" 
                             name="expireDates"
-                            className='col-span-6'
+                            className='col-span-12'
                         >
                             <DatePicker 
                                 style={{
@@ -145,18 +144,6 @@ const AddProduct = () => {
                                 }}
                             />
                         </Form.Item>
-
-                        <Form.Item 
-                            label="Quantity" 
-                            name="store"
-                            className='col-span-6'
-                        >
-                            <Input 
-                                size="large" 
-                                placeholder="Enter quantity of product"
-                            />
-                        </Form.Item>
-                    </div>
 
                     <div className='grid grid-cols-12 gap-6'>
                         <Form.Item 

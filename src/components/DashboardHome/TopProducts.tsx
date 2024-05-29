@@ -4,7 +4,7 @@ import { useGetProductsQuery } from "@/redux/slices/admin/productManagementApi";
 const TopProducts = () => {
   const { data: productsData } = useGetProductsQuery<Record<string, any>>({});
 
-  const data = productsData?.data?.data.map((item: any, index: number) => ({
+  const data = productsData?.data?.data.map((item: any, _index: number) => ({
     productId: item?.productId,
     productName: item?.productName,
 
@@ -50,14 +50,14 @@ const TopProducts = () => {
     },
   ];
   return (
-    <div className="bg-base rounded p-4 overflow-x-scroll">
+    <div className="bg-base rounded p-4">
       <div className="flex items-center justify-between">
         <Title className="font-bold mb-5">Top Products</Title>
         {/* <Link to="#" className="text-secondary text-lg hover:underline">
           View all
         </Link> */}
       </div>
-      <Table dataSource={data} columns={columns} pagination={false} />
+      <Table dataSource={data?.slice(0, 4)} columns={columns} pagination={false} />
     </div>
   );
 };

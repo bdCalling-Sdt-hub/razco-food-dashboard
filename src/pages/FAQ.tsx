@@ -51,36 +51,38 @@ const FAQPage = () => {
   };
   return (
     <div>
-      <Title className="mb-6">FAQ</Title>
-      <div className="flex justify-end mb-5">
-        <Button onClick={showModal}>
-          <Plus />
+      <div className="flex items-center justify-between mb-5">
+        <Title className="mb-6">FAQ</Title>
+        <Button className="w-[120px]" onClick={showModal} icon={<Plus />}>
+          Create
         </Button>
       </div>
-      {faqs?.data?.map((ques: any, index: number) => (
-        <div key={index} className="bg-base mb-2 p-2 rounded">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl">
-              {index + 1}.{ques.question}
-            </h2>
-            <div className="flex items-center gap-2 justify-end">
-              <button
-                onClick={() => showEditModal(ques)}
-                className="text-primary"
-              >
-                <Edit size={20} />
-              </button>
-              <button
-                onClick={() => handleDelete(ques?._id)}
-                className="text-red-500"
-              >
-                <Trash2 size={20} />
-              </button>
+      {
+        faqs?.data?.map((ques: any, index: number) => (
+          <div key={index} className="bg-base mb-2 p-2 rounded">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl">
+                {index + 1}.{ques.question}
+              </h2>
+              <div className="flex items-center gap-2 justify-end">
+                <button
+                  onClick={() => showEditModal(ques)}
+                  className="text-primary"
+                >
+                  <Edit size={20} />
+                </button>
+                <button
+                  onClick={() => handleDelete(ques?._id)}
+                  className="text-red-500"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
             </div>
+            <p className="mt-2 text-lg bg-gray-100 rounded p-2">{ques.answer}</p>
           </div>
-          <p className="mt-2 text-lg bg-gray-100 rounded p-2">{ques.answer}</p>
-        </div>
-      ))}
+        ))
+      }
       <FaqModal open={open} setOpen={setOpen} faqData={faqdata} />
     </div>
   );

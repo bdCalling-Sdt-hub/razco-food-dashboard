@@ -14,11 +14,10 @@ const SealOverviewChart = () => {
     Record<string, any>
   >({});
   const data = dashboardData?.data?.yearlySalesOverview;
-  console.log(data);
   return (
     <div className="bg-base rounded p-4">
       <Title className="font-bold mb-5">Sales Overview</Title>
-      <ResponsiveContainer width="100%" className="h-[300px]" height={300}>
+      <ResponsiveContainer width="100%"  height={272}>
         <AreaChart data={data} syncId="anyId">
           <XAxis dataKey="name" />
           <YAxis />

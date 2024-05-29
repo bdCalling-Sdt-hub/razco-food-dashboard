@@ -102,7 +102,8 @@ const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen, offer }) => {
         onCancel={handleCancel}
         footer={false}
       >
-        <Form.Item label="Offers Name">
+        <label htmlFor="">Offers Name</label>
+        <Form.Item>
           <Input
             value={offerName}
             onChange={(e) => setOfferName(e.target.value)}
@@ -110,7 +111,8 @@ const OfferModel: React.FC<OfferModelProps> = ({ open, setOpen, offer }) => {
             size="large"
           />
         </Form.Item>
-        <Form.Item label="Percentage">
+        <label htmlFor="">Offer Percentage</label>
+        <Form.Item>
           <Input
             value={percentage}
             onChange={(e) => setPercentage(e.target.value)}

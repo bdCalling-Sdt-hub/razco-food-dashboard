@@ -199,36 +199,23 @@ const EditProduct = ():React.JSX.Element => {
                         }
                     </div>
                     
-                    <div className='grid grid-cols-12 gap-6'>
-                        <Form.Item 
-                            label="Validity Date" 
-                            name="expireDates"
-                            className='col-span-6'
-                        >
-                            <DatePicker 
-                                style={{
-                                    width: "100%",
-                                    height: "48px",
-                                    background: "#F1F4F9",
-                                    border: "none",
-                                    borderRadius: "90px",
-                                    padding: "0 16px",
-                                    cursor: "pointer"
-                                }}
-                            />
-                        </Form.Item>
-
-                        <Form.Item 
-                            label="Quantity" 
-                            name="store"
-                            className='col-span-6'
-                        >
-                            <Input 
-                                size="large" 
-                                placeholder="Enter quantity of product"
-                            />
-                        </Form.Item>
-                    </div>
+                    <Form.Item 
+                        label="Validity Date" 
+                        name="expireDates"
+                        className='col-span-12'
+                    >
+                        <DatePicker 
+                            style={{
+                                width: "100%",
+                                height: "48px",
+                                background: "#F1F4F9",
+                                border: "none",
+                                borderRadius: "90px",
+                                padding: "0 16px",
+                                cursor: "pointer"
+                            }}
+                        />
+                    </Form.Item>
 
                     <div className='grid grid-cols-12 gap-6'>
                         <Form.Item 

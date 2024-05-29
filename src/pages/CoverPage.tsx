@@ -144,9 +144,10 @@ const CoverPage = () => {
 
   return (
     <div>
-      <Title>Cover Page</Title>
-      <div className="flex justify-between items-center mb-10 mt-4">
-        <Button onClick={showModal} icon={<Plus size={20} />}>
+      
+      <div className="flex  justify-between items-center mb-6 mt-4">
+        <Title>Cover Page</Title>
+        <Button className="w-[140px]" onClick={showModal} icon={<Plus size={20}  />}>
           Add Cover
         </Button>
       </div>

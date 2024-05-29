@@ -113,8 +113,8 @@ const CreateOffer = () => {
   };
   return (
     <div>
-      <Title>Manage Offer</Title>
-      <div className="flex justify-between items-center mb-10 mt-4">
+      <div className="flex justify-between items-center mb-6 mt-4">
+        <Title>Manage Offer</Title>
         <Button onClick={showModal} icon={<Plus size={20} />}>
           Add Offer
         </Button>

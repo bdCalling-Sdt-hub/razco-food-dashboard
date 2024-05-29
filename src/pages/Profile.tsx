@@ -74,7 +74,6 @@ const Profile = () => {
     setImage(file);
     const url = URL.createObjectURL(file);
     setImagePreview(url);
-    console.log(url);
   };
 
   return (
@@ -143,13 +142,8 @@ const Profile = () => {
                   <Input size="large" readOnly />
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item label="Phone Number" name="phone">
-                  <Input size="large" readOnly />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="Date of birth" name="dateOfBirth">
                   <Input size="large" readOnly />
                 </Form.Item>
               </Col>
@@ -182,13 +176,8 @@ const Profile = () => {
                   <Input size="large" readOnly />
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item label="Phone Number" name="phone">
-                  <Input size="large" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="Date of birth" name="dateOfBirth">
                   <Input size="large" />
                 </Form.Item>
               </Col>
