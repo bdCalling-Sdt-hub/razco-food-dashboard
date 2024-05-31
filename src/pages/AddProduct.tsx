@@ -35,7 +35,7 @@ const AddProduct = () => {
     }
 
     Object.keys(values).forEach((key) => {
-      formData.append(key, values[key]);
+      formData.append(key, values[key] && values[key]);
     });
 
     formData.forEach((values)=> console.log(values))

@@ -9,7 +9,7 @@ export const couponApi = baseApi.injectEndpoints({
         method: "POST",
         body: couponData,
       }),
-      invalidatesTags: [tagTypes.admin],
+      invalidatesTags: [tagTypes.admin, tagTypes.coupon],
     }),
     getCoupons: build.query({
       query: (arg: Record<string, any>) => {
@@ -25,7 +25,7 @@ export const couponApi = baseApi.injectEndpoints({
           meta,
         };
       },
-      providesTags: [tagTypes.coupon],
+      providesTags: [tagTypes.coupon, tagTypes.coupon],
     }),
     updateCoupon: build.mutation({
       query: ({ id, data }) => ({

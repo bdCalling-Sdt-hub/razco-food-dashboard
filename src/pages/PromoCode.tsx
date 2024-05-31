@@ -1,4 +1,5 @@
-import PromoCodeModel from "@/components/PromoCode/PromoCodeModel";
+import PromoCodeEditModal from "@/components/PromoCode/PromoCodeEditModal";
+import PromoCodeAddModel from "@/components/PromoCode/PromoCodeAddModel";
 import Button from "@/components/share/Button";
 import Title from "@/components/share/Title";
 import {
@@ -21,14 +22,14 @@ const PromoCode = () => {
   query["page"] = page;
 
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
-  const showModal = () => {
-    setOpen(true);
-  };
   const { data: couponData } = useGetCouponsQuery<Record<string, any>>({});
 
   const data = couponData?.data?.data;
   const [deleteCoupon, { isSuccess, error }] = useDeleteCouponMutation();
+
+
   useEffect(() => {
     if (error) {
       if ("data" in error) {
@@ -40,16 +41,14 @@ const PromoCode = () => {
       }
     }
   }, [data, error, isSuccess, setOpen]);
-  const showEditModal = (offer: any) => {
-    setSelectedOffer(offer);
-    setOpen(true);
-  };
+
+  
   const columns = [
     {
       title: "S.NO",
       dataIndex: "sNo",
       key: "sNo",
-      render: (text: string, record: any, index: number) => index + 1,
+      render: (_text: string, _record: any, index: number) => index + 1,
     },
     {
       title: "Coupon Name",
@@ -77,7 +76,7 @@ const PromoCode = () => {
       key: "action",
       render: (_: any, data: any) => (
         <div className="flex items-center gap-2 justify-end">
-          <button onClick={() => showEditModal(data)} className="text-primary">
+          <button onClick={() => (setSelectedOffer(data), setEditOpen(true))  } className="text-primary">
             <Edit />
           </button>
           <button
@@ -121,9 +120,9 @@ const PromoCode = () => {
   };
   return (
     <div>
-      <Title>Manage Promo Code</Title>
       <div className="flex justify-between items-center mb-10 mt-4">
-        <Button onClick={showModal} icon={<Plus size={20} />}>
+        <Title>Manage Promo Code</Title>
+        <Button onClick={()=>setOpen(true)} icon={<Plus size={20} />}>
           Create Promo Code
         </Button>
       </div>
@@ -138,7 +137,8 @@ const PromoCode = () => {
           showSizeChanger: true,
         }}
       />
-      <PromoCodeModel open={open} setOpen={setOpen} promoData={selectedOffer} />
+      <PromoCodeAddModel open={open} setOpen={setOpen} />
+      <PromoCodeEditModal open={editOpen} setOpen={setEditOpen} promoData={selectedOffer} />
     </div>
   );
 };
