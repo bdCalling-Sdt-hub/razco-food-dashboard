@@ -25,7 +25,7 @@ export const couponApi = baseApi.injectEndpoints({
           meta,
         };
       },
-      providesTags: [tagTypes.coupon, tagTypes.coupon],
+      providesTags: [tagTypes.coupon],
     }),
     updateCoupon: build.mutation({
       query: ({ id, data }) => ({
@@ -33,7 +33,7 @@ export const couponApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: [tagTypes.coupon],
+      invalidatesTags: [tagTypes.coupon, tagTypes.coupon],
     }),
     deleteCoupon: build.mutation({
       query: (id) => ({
