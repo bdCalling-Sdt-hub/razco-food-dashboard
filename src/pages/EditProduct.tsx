@@ -43,7 +43,7 @@ const EditProduct = ():React.JSX.Element => {
 
     const onFinish = async (values: any) => {
             const formData = new FormData();
-            formData.append("expireDate", JSON.stringify(moment(values?.expireDates)?.format('YYYY-MM-DD')))
+            formData.append("expireDate", moment(values?.expireDates)?.format('YYYY-MM-DD'));
     
             for (const image of imageToDelete) {
                 formData.append("imagesToDelete[]", image);

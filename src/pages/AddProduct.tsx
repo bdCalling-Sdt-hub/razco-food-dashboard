@@ -27,7 +27,7 @@ const AddProduct = () => {
   
   const onFinish = async (values: any) => {
     const formData = new FormData();
-    formData.append("expireDate", JSON.stringify(moment(values?.expireDates)?.format('YYYY-MM-DD')))
+    formData.append("expireDate", moment(values?.expireDates)?.format('YYYY-MM-DD'))
     formData.append("offer", values?.offers?.split('|')[0]);
       
     for (const image of fileList) {
