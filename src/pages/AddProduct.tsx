@@ -74,11 +74,16 @@ const AddProduct = () => {
         }
     }, [selectedOffer, form, price]);
 
+
+
   useEffect(()=>{
     if (selectedOffer) {
       form.setFieldsValue(selectedOffer);
     }
   }, [selectedOffer, form]);
+
+
+  
 
   return (
     <div>

@@ -23,6 +23,7 @@ const PromoCodeEditModal: React.FC<OfferModelProps> = ({
     }
   }, [promoData, form]);
 
+
   const [updatePromo] = useUpdateCouponMutation();
 
 
@@ -47,7 +48,11 @@ const PromoCodeEditModal: React.FC<OfferModelProps> = ({
         onCancel={()=>setOpen(false)}
         footer={false}
       >
-        <Form onFinish={onFinish} form={form} layout="vertical">
+        <Form 
+          onFinish={onFinish} 
+          form={form} 
+          layout="vertical"
+        >
           <Form.Item label="Coupon Code" name="couponCode">
             <Input
               placeholder="Enter coupon code"
@@ -82,7 +87,7 @@ const PromoCodeEditModal: React.FC<OfferModelProps> = ({
             />
           </Form.Item>
           <Form.Item>
-            <Button  className="px-10 mx-auto mt-5">Save</Button>
+            <Button className="px-10 mx-auto mt-5">Save</Button>
           </Form.Item>
         </Form>
       </Modal>
