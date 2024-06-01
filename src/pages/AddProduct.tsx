@@ -27,21 +27,31 @@ const AddProduct = () => {
   
   const onFinish = async (values: any) => {
     const formData = new FormData();
-    formData.append("expireDate", moment(values?.expireDates)?.format('YYYY-MM-DD'))
-    formData.append("offer", values?.offers?.split('|')[0]);
-      
-    for (const image of fileList) {
-      formData.append("productImage", image);
+    const { brand, offers, discount, discountPrice, ...otherValues } = values;
+
+
+    if(brand !== undefined){
+        formData.append("brand", values.brand);
+    }
+    if(offers !== undefined){
+        formData.append("offer", values?.offers?.split('|')[0]);
+        formData.append("discount", values?.discountPrice);
+        formData.append("discountPrice", values?.discountPrice);
     }
 
-    Object.keys(values).forEach((key) => {
-      formData.append(key, values[key] && values[key]);
-    });
+    for (const image of fileList) {
+        formData.append("productImage", image);
+    }
 
-    formData.forEach((values)=> console.log(values))
+    formData.append("expireDate", moment(values?.expireDates)?.format('YYYY-MM-DD'))
+    
+    Object.keys(otherValues).forEach((key) => {
+      formData.append(key, values[key]);
+    });
 
 
     await addProduct(formData).then((response)=>{
+        console.log(response);
       if(response?.data?.statusCode === 200){
         toast.success("Product create successfully");
       navigate("/product-management");

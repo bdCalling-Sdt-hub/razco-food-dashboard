@@ -43,6 +43,8 @@ const EditProduct = ():React.JSX.Element => {
 
     const onFinish = async (values: any) => {
             const formData = new FormData();
+            const { brand, offer, discount, discountPrice, ...otherValues } = values;
+
             formData.append("expireDate", moment(values?.expireDates)?.format('YYYY-MM-DD'));
     
             for (const image of imageToDelete) {
@@ -52,14 +54,22 @@ const EditProduct = ():React.JSX.Element => {
             for (const image of imageList) {
                 formData.append("productImage", image);
             }
+
+            if(brand !== undefined){
+                formData.append("brand", values.brand);
+            }
+            if(offer !== undefined){
+                formData.append("offer", values?.offer?.split('|')[0]);
+                formData.append("discount", values?.discountPrice);
+                formData.append("discountPrice", values?.discountPrice);
+            }
     
-            Object.keys(values).forEach((key) => {
+            Object.keys(otherValues).forEach((key) => {
                 formData.append(key, values[key]);
             });
-
-            formData.forEach((values)=>console.log(values))
     
             await updateProduct({ id: id, formData }).then((response)=>{
+                console.log(response)
                 if(response.data.statusCode === 200){
                     toast.success("Product updated successfully");
                     navigate("/product-management");

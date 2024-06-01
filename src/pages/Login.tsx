@@ -17,6 +17,7 @@ const Login = () => {
         toast.success("Login Successfully");
         storeUserInfo({ accessToken: data?.data });
         navigate("/");
+        window.location.reload();
       }
     }
 
