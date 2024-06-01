@@ -18,7 +18,7 @@ export const imageURL = "http://146.190.130.172:5000";
 export const baseUrl = axios.create({
   baseURL: "http://146.190.130.172:5000/api/v1",
 });
-export const socketURL = "http://146.190.130.172:5000/api/v1";
+export const socketURL = "http://146.190.130.172:5000";
 
 
 // digital ocean link http://146.190.130.172:5000/
