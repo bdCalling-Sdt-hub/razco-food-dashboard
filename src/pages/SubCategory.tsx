@@ -27,6 +27,8 @@ const SubCategory = () => {
 
 
   const data = subCategoryData?.data?.data;
+
+  
   const [deleteSubCategory, { isSuccess, error }] =
     useDeleteSubCategoryMutation();
   useEffect(() => {
