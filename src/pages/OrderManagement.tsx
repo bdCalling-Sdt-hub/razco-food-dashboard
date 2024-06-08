@@ -146,11 +146,10 @@ const OrderManagement = () => {
         dataSource={ordersData?.data?.data}
         columns={columns}
         pagination={{
-          pageSize: size,
           total: ordersData?.data?.pagination?.total,
           current: page,
           onChange: handlePageChange,
-          showSizeChanger: true,
+          showSizeChanger: false,
         }}
       />
     </div>

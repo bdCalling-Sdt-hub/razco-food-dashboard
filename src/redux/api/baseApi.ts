@@ -8,16 +8,16 @@ const authToken = getFromLocalStorage(authKey);
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://server.razcofoods.net/api/v1",
-    // baseUrl: "http://146.190.130.172:5000/api/v1",
+    // baseUrl: "http://server.razcofoods.net/api/v1",
+    baseUrl: "http://192.168.10.16:5000/api/v1",
     headers: { Authorization: `Bearer ${authToken}` },
   }),
   endpoints: () => ({}),
   tagTypes: tagTypesList,
 });
-export const imageURL = "http://server.razcofoods.net/";
+export const imageURL = "http://192.168.10.16:5000";
 export const baseUrl = axios.create({
-  baseURL: "http://server.razcofoods.net/",
+  baseURL: "http://192.168.10.16:5000",
 });
 export const socketURL = "http://server.razcofoods.net/";
 

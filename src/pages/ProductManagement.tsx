@@ -196,11 +196,10 @@ const ProductManagement = () => {
         dataSource={data}
         columns={columns}
         pagination={{
-          pageSize: size,
           total: productData?.data?.pagination?.total,
           current: page,
           onChange: handlePageChange,
-          showSizeChanger: true,
+          showSizeChanger: false,
         }}
       />
     </div>
