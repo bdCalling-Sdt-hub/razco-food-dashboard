@@ -8,8 +8,8 @@ const authToken = getFromLocalStorage(authKey);
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    // baseUrl: "http://server.razcofoods.net/api/v1",
-    baseUrl: "http://192.168.10.16:5000/api/v1",
+    baseUrl: "http://server.razcofoods.net/api/v1",
+    // baseUrl: "http://192.168.10.16:5000/api/v1",
     headers: { Authorization: `Bearer ${authToken}` },
   }),
   endpoints: () => ({}),
