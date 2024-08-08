@@ -27,11 +27,12 @@ import TermsAndCondition from "@/pages/TermsAndCondition";
 import UserManagement from "@/pages/UserManagement";
 import VerifyEmail from "@/pages/VerifyEmail";
 import { createBrowserRouter } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Dashboard />,
+    element: <PrivateRoute><Dashboard />r</PrivateRoute> ,
     children: [
       {
         path: "/",

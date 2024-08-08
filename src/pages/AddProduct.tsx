@@ -49,6 +49,21 @@ const AddProduct = () => {
       formData.append(key, values[key]);
     });
 
+    try {
+        await addProduct(formData).unwrap().then((result)=>{
+            console.log(result)
+            if (result?.success) {
+                form.resetFields()
+                setFileList([])
+                toast.success("Product create successfully");
+                navigate("/product-management");
+            }
+        });
+        
+    } catch (error: any) {
+        toast.error(error?.data?.message || "An unexpected server error occurred");
+    }
+
 
     await addProduct(formData).then((response)=>{
         console.log(response);
