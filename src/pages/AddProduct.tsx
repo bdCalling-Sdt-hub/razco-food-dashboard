@@ -2,7 +2,7 @@
 import Title from "@/components/share/Title";
 import { useGetCategorysQuery } from "@/redux/slices/admin/categoryApi";
 import { useGetOffersQuery } from "@/redux/slices/admin/offerApi";
-import {useAddProductMutation} from "@/redux/slices/admin/productManagementApi";
+import {useAddProductMutation, useCsvProductMutation} from "@/redux/slices/admin/productManagementApi";
 import { useGetSubCategoriesQuery } from "@/redux/slices/admin/subCategoryApi";
 import { Button, DatePicker, Form, Input, Select } from "antd";
 import { Trash } from "lucide-react";
@@ -22,6 +22,7 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const { data: subCategoryData } = useGetSubCategoriesQuery<Record<string, any>>({});
   const [addProduct, { isLoading }] = useAddProductMutation();
+  const [csvProduct] = useCsvProductMutation();
 
   const [fileList, setFileList] = useState<File[]>([]);
   
@@ -101,18 +102,51 @@ const AddProduct = () => {
 
 
 
-  useEffect(()=>{
-    if (selectedOffer) {
-      form.setFieldsValue(selectedOffer);
-    }
-  }, [selectedOffer, form]);
+    useEffect(()=>{
+        if (selectedOffer) {
+        form.setFieldsValue(selectedOffer);
+        }
+    }, [selectedOffer, form]);
 
+    const [csv, setCsv] = useState(null);
+    console.log(csv)
+
+
+    useEffect(() => {
+        const checkAndUploadCsv = async () => {
+            if (csv) {
+                const formData = new FormData();
+                formData.append("csv", csv);
+        
+                try {
+                    await csvProduct(formData).then((res)=>{
+                        console.log(res)
+                        if (res?.data?.statusCode === 200) {
+                            toast.success("Product created successfully");
+                            navigate("/product-management");
+                        }
+                    })
+                } catch (error) {
+                    console.log(error)
+                    console.error("Error while adding product:", error);
+                }
+            }
+        };
+      
+        checkAndUploadCsv();
+      }, [csv, csvProduct, navigate]);
+      
 
   
 
   return (
     <div>
-      <Title>Add Product</Title>
+        <div className="flex items-center justify-between">
+            <Title>Add Product</Title>
+            <input onChange={(e:any)=>setCsv(e.target.files[0])} type="file" name="" id="csv" style={{display: "none"}} />
+            <label htmlFor="csv" className=" bg-primary flex items-center justify-center text-white w-[120px] h-[42px] rounded-md">Upload CSV</label>
+            
+        </div>
 
       <Form
                 layout="vertical"

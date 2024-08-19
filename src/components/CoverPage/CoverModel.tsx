@@ -20,7 +20,7 @@ const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen, cover }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [coverName, setCoverName] = useState("");
-  const [createCover, { data, isSuccess, error }] = useCreateCoverMutation();
+  const [createCover, { data, isLoading, isSuccess, error }] = useCreateCoverMutation();
   // console.log(cover.bannerImage);
   const [updateCover] = useUpdateCoverMutation();
   useEffect(() => {
@@ -148,7 +148,7 @@ const CoverModel: React.FC<OfferModelProps> = ({ open, setOpen, cover }) => {
           </label>
         </div>
         <Button onClick={handleCoupon} className="px-10 mx-auto mt-5">
-          Save
+          {isLoading ? "Creating" : "Save" }
         </Button>
       </Modal>
     </div>

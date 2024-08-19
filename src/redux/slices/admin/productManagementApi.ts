@@ -11,6 +11,14 @@ export const productManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.product],
     }),
+    csvProduct: build.mutation({
+      query: (data) => ({
+        url: `product/upload-csv`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.product],
+    }),
 
     getProducts: build.query({
       query: (arg: Record<string, any>) => {
@@ -56,6 +64,7 @@ export const productManagementApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useCsvProductMutation,
   useAddProductMutation,
   useGetProductsQuery,
   useDeleteProductMutation,
