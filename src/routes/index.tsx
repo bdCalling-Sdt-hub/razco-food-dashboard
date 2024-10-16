@@ -28,6 +28,7 @@ import UserManagement from "@/pages/UserManagement";
 import VerifyEmail from "@/pages/VerifyEmail";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
+import WeeklyOffer from "@/pages/WeeklyOffer";
 
 const router = createBrowserRouter([
   {
@@ -93,6 +94,10 @@ const router = createBrowserRouter([
       {
         path: "/settings",
         element: <Settings />,
+      },
+      {
+        path: "/weekly-offer",
+        element: <WeeklyOffer />,
       },
       {
         path: "/settings/terms-and-conditions",

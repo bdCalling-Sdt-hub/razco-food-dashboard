@@ -78,6 +78,7 @@ const CategoryModel: React.FC<OfferModelProps> = ({
         }
       } else {
         const res = await createCategory(formData);
+        console.log(res)
         if (res?.data?.success === true) {
           toast.success("Category created successfully");
         }

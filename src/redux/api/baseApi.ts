@@ -15,8 +15,8 @@ export const baseApi = createApi({
   endpoints: () => ({}),
   tagTypes: tagTypesList,
 });
-// export const imageURL = "https://server.razcofoods.net";
-export const imageURL = "http://192.168.10.185:5000";
+export const imageURL = "https://server.razcofoods.net";
+// export const imageURL = "http://192.168.10.185:5000";
 export const baseUrl = axios.create({
   baseURL: "https://server.razcofoods.net",
   // baseURL: "http://192.168.10.185:5000",

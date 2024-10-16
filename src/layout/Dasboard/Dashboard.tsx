@@ -12,6 +12,7 @@ import {
   ShieldPlus,
   ShoppingCart,
   SquareMenu,
+  SquarePercent,
   Tag,
   Users,
 } from "lucide-react";
@@ -85,6 +86,11 @@ const menuItems = [
     path: "/feedback",
     title: "Feedback",
     icon: <MessageSquareReply size={18} />,
+  },
+  {
+    path: "/weekly-offer",
+    title: "Weekly Deal",
+    icon: <SquarePercent size={18} />,
   },
 
   {

@@ -113,7 +113,6 @@ const PromoCode = () => {
         await deleteCoupon(id);
         Swal.fire("Deleted!", "The coupon has been deleted.", "success");
       } catch (error: any) {
-        console.error(error.message);
         Swal.fire("Error!", "There was an error deleting the coupon.", "error");
       }
     }
